@@ -1,0 +1,139 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Register Referee - Step 1 - Referee System{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="text-center" style="color: white">Register as a Referee - Step 1</h2>
+                </div>
+                <div class="card-body">
+                    <p class="text-center mb-4">Please provide your basic information to begin registration.</p>
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Please correct the errors below.
+                    </div>
+                    {% endif %}
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% for field in form %}
+                        <div class="form-group mb-3 {% if field.errors %}has-error{% endif %}">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                            <ul class="errorlist">
+                                {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" name="step1" class="btn btn-primary" style="background-color: rgb(37, 33, 247)">Next</button>
+                        </div>
+                    </form>
+                    
+                    <div class="mt-3 text-center">
+                        <p>Already have an account? <a href="{% url 'accounts:login' %}" class="text-primary">Login here</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Background and card styling */
+body {
+    background-color: #010628;  /* A medium-dark blue */
+}
+
+.container.mt-5 {
+    background-color: transparent;  /* Make container transparent so body color shows */
+}
+
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Add shadow to card for better contrast */
+}
+
+.card-header {
+    background-color: #0d2456;  /* Darker blue for header */
+    color: white;  /* White text for better readability */
+}
+
+.card-body {
+    background-color: #150f63;  /* Darker blue for header */
+    color: white
+    ;
+}
+/* Form styling */
+.form-control {
+    border-radius: 0.25rem;
+    padding: 0.5rem 0.75rem;
+}
+
+.password-help,
+.form-text,
+small {
+    color: white !important;  /* White color */
+}
+
+/* Make sure any paragraph text also appears white */
+.card-body p,
+.white-text {
+    color: white !important;
+}
+
+/* Validation styling */
+.errorlist {
+    color: #ff6b6b;
+    font-weight: bold;
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+}
+
+.has-error .form-control {
+    border-color: #dc3545;
+}
+
+.alert-danger {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+
+/* Button styling */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Link styling */
+a.text-primary {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+
+a.text-primary:hover {
+    text-decoration: underline;
+}
+</style>
+{% endblock %}

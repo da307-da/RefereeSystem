@@ -1,0 +1,1218 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Home - Ref IQ{% endblock %}
+
+{% block content %}
+<head>
+
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <style>
+        
+    body {
+        background-color: #010628; 
+    }
+
+    .fixtures-container{
+        background-color: #150f63;
+    }
+    h1 {
+        color: white;
+    }
+
+    h2 {
+        color: white;
+    }
+
+    .page-header {
+        background-color: #ffffff;  
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .user-dashboard{
+        background-color: #150f63;
+    }
+    .user-dashboard #vote-section h3 {
+        color: white;
+    }
+    .dashboard {
+        background-color: #150f63;
+    }
+    .page-title {
+        margin: 0;
+        font-size: 2.5rem;
+    }
+    .voting-section {
+        background-color: #010628;
+
+    }
+
+    .standings-container {
+        background-color: #3182ce;
+    }
+    </style>
+
+</head>
+    <h1>Welcome to Ref IQ</h1>
+    
+    {% if user.is_authenticated %}
+        <!-- Authenticated user content -->
+        <div style="background: #600808; padding: 10px; margin: 10px 0;">
+        </div>
+        
+        <div class="dashboard">
+            <h2>Hello, {{ user.username }}!</h2>
+            
+            <!-- Add the fixtures component here -->
+            <div id="fixtures-root" class="fixed right-4 top-4"></div>
+
+            <!-- Premier League Standings and Fixtures -->
+            <div class="content-area" style="display: flex; margin-top: 20px;">
+                <!-- Premier League Standings -->
+                <div class="standings-container" style="position: fixed; left: 10px; top: 80px; width: 20%; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 16px; margin-right: 20px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin: 0 0 16px 0; color: #2d3748; font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Premier League Table</h3>
+                    {% if standings %}
+                        <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                            <thead>
+                                <tr style="background-color: #ffffff; border-bottom: 1px solid #e2e8f0;">
+                                    <th style="text-align: center; padding: 10px 5px;">Pos</th>
+                                    <th style="text-align: left; padding: 10px 5px;">Team</th>
+                                    <th style="text-align: center; padding: 10px 5px;">MP</th>
+                                    <th style="text-align: center; padding: 10px 5px;">W</th>
+                                    <th style="text-align: center; padding: 10px 5px;">D</th>
+                                    <th style="text-align: center; padding: 10px 5px;">L</th>
+                                    <th style="text-align: center; padding: 10px 5px;">GF</th>
+                                    <th style="text-align: center; padding: 10px 5px;">GA</th>
+                                    <th style="text-align: center; padding: 10px 5px;">GD</th>
+                                    <th style="text-align: center; padding: 10px 5px;">Pts</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for team in standings %}
+                                    <tr style="border-bottom: 1px solid #e2e8f0; {% if team.rank <= 4 %}background-color: rgba(104, 211, 145, 0.1);{% endif %} {% if team.rank >= 18 %}background-color: rgba(226, 74, 74, 0.1);{% endif %}">
+                                        <td style="text-align: center; padding: 10px 5px; font-weight: 600;">{{ team.rank }}</td>
+                                        <td style="text-align: left; padding: 10px 5px;">
+                                            <div style="display: flex; align-items: center;">
+                                                <img src="{{ team.team.logo }}" alt="{{ team.team.name }}" style="width: 20px; height: 20px; margin-right: 8px;">
+                                                <span>{{ team.team.name }}</span>
+                                            </div>
+                                        </td>
+                                        <td style="text-align: center; padding: 10px 5px;">{{ team.all.played }}</td>
+                                        <td style="text-align: center; padding: 10px 5px;">{{ team.all.win }}</td>
+                                        <td style="text-align: center; padding: 10px 5px;">{{ team.all.draw }}</td>
+                                        <td style="text-align: center; padding: 10px 5px;">{{ team.all.lose }}</td>
+                                        <td style="text-align: center; padding: 10px 5px;">{{ team.all.goals.for }}</td>
+                                        <td style="text-align: center; padding: 10px 5px;">{{ team.all.goals.against }}</td>
+                                        <td style="text-align: center; padding: 10px 5px;">{{ team.goalsDiff }}</td>
+                                        <td style="text-align: center; padding: 10px 5px; font-weight: 700;">{{ team.points }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                        <div style="margin-top: 10px; display: flex; font-size: 12px;">
+                            <div style="margin-right: 15px; display: flex; align-items: center;">
+                                <span style="display: inline-block; width: 10px; height: 10px; background-color: rgba(104, 211, 145, 0.3); margin-right: 5px;"></span>
+                                <span>Champions League</span>
+                            </div>
+                            <div style="display: flex; align-items: center;">
+                                <span style="display: inline-block; width: 10px; height: 10px; background-color: rgba(226, 74, 74, 0.3); margin-right: 5px;"></span>
+                                <span>Relegation</span>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p style="font-size: 13px; color: #64748b; text-align: center; font-style: italic; padding: 12px; background-color: #f8fafc; border-radius: 6px;">No standings data available</p>
+                    {% endif %}
+                </div>
+
+                <!-- Fixtures Container -->
+                <div class="fixtures-container" style="position: fixed; right: 20px; top: 80px; width: 300px; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 16px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin: 0 0 16px 0; color: #2d3748; font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Premier League Fixtures</h3>
+                    
+                    <!-- Live Matches -->
+                    <div class="live-matches" style="margin-bottom: 24px;">
+                        <h4 style="color: #e53e3e; font-size: 14px; font-weight: 600; margin: 0 0 12px 0; display: flex; align-items: center;">
+                            <span style="display: inline-block; width: 8px; height: 8px; background-color: #e53e3e; border-radius: 50%; margin-right: 6px; animation: pulse 1.5s infinite;"></span>
+                            LIVE MATCHES
+                        </h4>
+                        {% if live_matches %}
+                            <ul class="match-list" style="list-style-type: none; padding: 0; margin: 0;">
+                                {% for match in live_matches %}
+                                    <li class="match-item" style="background-color: #f8fafc; border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #e53e3e;">
+                                        <div class="match-teams" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                            <div class="team home" style="font-weight: 500; text-align: left; width: 40%;">{{ match.teams.home.name }}</div>
+                                            <div class="score" style="font-weight: 700; font-size: 16px; text-align: center; width: 20%;">{{ match.goals.home }} - {{ match.goals.away }}</div>
+                                            <div class="team away" style="font-weight: 500; text-align: right; width: 40%;">{{ match.teams.away.name }}</div>
+                                        </div>
+                                        <div class="match-status" style="font-size: 12px; color: #e53e3e; text-align: center;">
+                                            {{ match.fixture.status.elapsed }}' | {{ match.fixture.status.long }}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="font-size: 13px; color: #64748b; text-align: center; font-style: italic; padding: 12px; background-color: #f8fafc; border-radius: 6px;">No live matches at the moment</p>
+                        {% endif %}
+                    </div>
+                    <!-- Upcoming Matches -->
+                    <div class="upcoming-matches" style="margin-bottom: 24px;">
+                        <h4 style="color: #2d3748; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">UPCOMING MATCHES</h4>
+                        {% if upcoming_matches %}
+                            <ul class="match-list" style="list-style-type: none; padding: 0; margin: 0;">
+                                {% for match in upcoming_matches %}
+                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: #f8fafc; border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #805ad5; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
+                                        <div class="match-date" style="font-size: 11px; color: #718096; margin-bottom: 6px;">{{ match.fixture.date|date:"D, d M Y - H:i" }}</div>
+                                        <div class="match-teams" style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div class="team home" style="font-weight: 500; text-align: left; width: 40%;">{{ match.teams.home.name }}</div>
+                                            <div class="vs" style="font-weight: 700; font-size: 12px; text-align: center; width: 20%;">vs</div>
+                                            <div class="team away" style="font-weight: 500; text-align: right; width: 40%;">{{ match.teams.away.name }}</div>
+                                        </div>
+                                        <div class="match-venue" style="font-size: 11px; color: #718096; text-align: center; margin-top: 6px;">{{ match.fixture.venue.name }}</div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="font-size: 13px; color: #64748b; text-align: center; font-style: italic; padding: 12px; background-color: #f8fafc; border-radius: 6px;">No upcoming matches available</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Current Gameweek Matches -->
+                    <div class="gameweek-matches" style="margin-bottom: 24px;">
+                        <h4 style="color: #2d3748; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">CURRENT GAMEWEEK</h4>
+                        {% if past_matches %}
+                            <ul class="match-list" style="list-style-type: none; padding: 0; margin: 0;">
+                                {% for match in past_matches|slice:":10" %}
+                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: #f8fafc; border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #4299e1; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
+                                        <div class="match-date" style="font-size: 11px; color: #718096; margin-bottom: 6px;">{{ match.fixture.date|date:"D, d M Y - H:i" }}</div>
+                                        <div class="match-teams" style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div class="team home" style="font-weight: 500; text-align: left; width: 40%;">{{ match.teams.home.name }}</div>
+                                            <div class="score" style="font-weight: 700; font-size: 16px; text-align: center; width: 20%;">{{ match.goals.home }} - {{ match.goals.away }}</div>
+                                            <div class="team away" style="font-weight: 500; text-align: right; width: 40%;">{{ match.teams.away.name }}</div>
+                                        </div>
+                                        <div class="match-status" style="font-size: 11px; color: #718096; text-align: center; margin-top: 6px;">{{ match.fixture.status.long }}</div>
+                                        
+                                        <!-- Referee Rating Section (for ex-referees) -->
+                                        {% if user.user_type == 'ex_referee' %}
+                                            <div class="referee-rating-section" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e0;">
+                                                <div style="font-size: 12px; color: #4a5568; margin-bottom: 5px;">
+                                                    Rate referee's performance:
+                                                </div>
+                                                <div class="rating-stars" style="display: flex; justify-content: center;">
+                                                    {% for i in "1234567890" %}
+                                                        <span 
+                                                            class="rating-star" 
+                                                            data-value="{{ forloop.counter }}" 
+                                                            data-match="{{ match.fixture.id }}"
+                                                            onclick="submitRefereeRating('{{ match.fixture.id }}', {{ forloop.counter }})"
+                                                            style="cursor: pointer; font-size: 18px; color: #a0aec0; margin: 0 2px;"
+                                                            onmouseover="highlightStars(this)"
+                                                            onmouseout="resetStars(this)"
+                                                        >
+                                                            {{ forloop.counter }}
+                                                        </span>
+                                                    {% endfor %}
+                                                </div>
+                                                <div id="rating-status-{{ match.fixture.id }}" style="font-size: 11px; color: #718096; text-align: center; margin-top: 5px; height: 15px;"></div>
+                                            </div>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="font-size: 13px; color: #64748b; text-align: center; font-style: italic; padding: 12px; background-color: #f8fafc; border-radius: 6px;">No match data available</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Previous Gameweek Matches -->
+                    <div class="previous-gameweek-matches" style="margin-bottom: 24px;">
+                        <h4 style="color: #2d3748; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">PREVIOUS GAMEWEEK</h4>
+                        {% if previous_gameweek_matches %}
+                            <ul class="match-list" style="list-style-type: none; padding: 0; margin: 0;">
+                                {% for match in previous_gameweek_matches %}
+                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: #f8fafc; border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #a0aec0; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
+                                        <div class="match-date" style="font-size: 11px; color: #718096; margin-bottom: 6px;">{{ match.fixture.date|date:"D, d M Y - H:i" }}</div>
+                                        <div class="match-teams" style="display: flex; justify-content: space-between; align-items: center;">
+                                            <div class="team home" style="font-weight: 500; text-align: left; width: 40%;">{{ match.teams.home.name }}</div>
+                                            <div class="score" style="font-weight: 700; font-size: 16px; text-align: center; width: 20%;">{{ match.goals.home }} - {{ match.goals.away }}</div>
+                                            <div class="team away" style="font-weight: 500; text-align: right; width: 40%;">{{ match.teams.away.name }}</div>
+                                        </div>
+                                        <div class="match-status" style="font-size: 11px; color: #718096; text-align: center; margin-top: 6px;">{{ match.fixture.status.long }}</div>
+
+                                    <!-- Referee Rating Section (for ex-referees) -->
+                                    {% if user.user_type == 'ex_referee' %}
+                                        <div class="referee-rating-section" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e0;">
+                                            <div style="font-size: 12px; color: #4a5568; margin-bottom: 5px;">
+                                                Rate referee's performance:
+                                            </div>
+                                            <div class="rating-stars" style="display: flex; justify-content: center;">
+                                                {% for i in "1234567890" %}
+                                                    <span 
+                                                        class="rating-star" 
+                                                        data-value="{{ forloop.counter }}" 
+                                                        data-match="{{ match.fixture.id }}"
+                                                        onclick="submitRefereeRating('{{ match.fixture.id }}', {{ forloop.counter }})"
+                                                        style="cursor: pointer; font-size: 18px; color: #a0aec0; margin: 0 2px;"
+                                                        onmouseover="highlightStars(this)"
+                                                        onmouseout="resetStars(this)"
+                                                    >
+                                                        {{ forloop.counter }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                            <div id="rating-status-{{ match.fixture.id }}" style="font-size: 11px; color: #718096; text-align: center; margin-top: 5px; height: 15px;"></div>
+                                        </div>
+                                        <div class="feedback" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e0;">
+                                            <div style="font-size: 12px; color: #4a5568; margin-bottom: 5px;">
+                                                {% if match.fixture.id %}
+                                                    <a href="{% url 'accounts:rate_referee' match.fixture.id %}"> Provide feedback</a>
+                                                {% else %}
+                                                    <span>Fixture ID not available</span>
+                                                {% endif %}
+
+                                    {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p style="font-size: 13px; color: #64748b; text-align: center; font-style: italic; padding: 12px; background-color: #f8fafc; border-radius: 6px;">No previous gameweek matches available</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <!-- Only show for ex-referees -->
+    {% if user.user_type == 'ex_referee' %}
+    <!-- Rating Summary Button -->
+    <div class="rating-summary-button" style="text-align: center; margin: 20px 0;">
+        <button id="showRatingSummaryBtn" onclick="toggleRatingSummary()" style="background-color: #3182ce; color: white; border: none; border-radius: 4px; padding: 8px 16px; font-weight: 500; cursor: pointer;">
+            View Referee Ratings Summary
+        </button>
+    </div>
+
+    <!-- Referee Ratings Summary (initially hidden) -->
+    <div id="refereeSummaryContainer" style="display: none; margin-top: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
+        <div style="background-color: #10203c; color: white; padding: 12px 16px;">
+            <h3 style="margin: 0; font-size: 16px; font-weight: 600;">Referee Ratings Summary</h3>
+        </div>
+        <div id="refereeSummaryContent" style="padding: 16px; background-color: white;">
+            <!-- Content will be loaded here -->
+            <div style="text-align: center; padding: 20px;">
+                <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #3182ce; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                <p style="margin-top: 10px; color: #4a5568;">Loading ratings summary...</p>
+            </div>
+        </div>
+    </div>
+
+
+            <!-- Add this where you want the recent match rating to appear -->
+            <div style="margin-top: 20px">
+                <div id="recentMatchContainer"></div>
+            </div>
+    </div>
+    {% endif %}
+
+    {% if user.is_authenticated and user.user_type == 'referee' or user.user_type == 'ex_referee' %}
+    <div class="leaderboard-link" style="text-align: center; margin: 20px 0;">
+        <a href="{% url 'accounts:referee_leaderboard' %}" class="leaderboard-button" style="background-color: #4a5568; color: white; border: none; border-radius: 4px; padding: 8px 16px; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block;">
+            View Referee Performance Leaderboard
+        </a>
+    </div>
+    {% endif %}
+
+
+    {% if user.is_authenticated and user.user_type == 'referee' %}
+        <div class="referee-dashboard" style="max-width: 800px; margin: 20px auto; padding: 20px;">
+            <h2>My Referee Dashboard</h2>
+            
+            <!-- Performance Container -->
+            <div id="myPerformanceContainer" style="margin-top: 20px;">
+                <!-- Content will be loaded here via JavaScript -->
+                <div style="text-align: center; padding: 20px;">
+                    <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #3182ce; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <p style="margin-top: 10px; color: #4a5568;">Loading your performance data...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Icon in the top right corner -->
+        <div style="position: absolute; top: 20px; right: 20px;">
+            <a href="{% url 'accounts:referee_profile' %}">
+                <img src="{% static 'images/profile-icon.png' %}" alt="Profile" width="40" height="40">
+            </a>
+        </div>
+
+        <div class="mb-3">
+            <a href="{% url 'accounts:referee_feedback' %}" class="btn btn-info">
+                <i class="fas fa-comments"></i> View My Performance Feedback
+            </a>
+        </div>
+    {% elif user.user_type == 'user' %}
+    <div class="user-dashboard" style="max-width: 800px; margin: 20px auto; padding: 5px;">
+        <h3 style="color: white;">User Dashboard</h3>
+
+        <a href="{% url 'accounts:fan_chat' %}" class="chat-link">Go to Fan Chat</a>
+        <div class="voting-section" style="max-width: 800px; margin: 10px auto; padding: 20px;">
+            <!-- Voting System -->
+            <div id="vote-section" style="background-color: #010628; color: #ffffff">
+                <div id="match-106895" >
+                    
+                    <h3>Everton vs Nottingham Forest</h3>
+                    <h3>Was the referee's decision correct?</h3>
+                    </h3>
+                    <button onclick="submitVote('yes', 106895)">✅ Yes</button>
+                    <button onclick="submitVote('no', 106895)">❌ No</button>
+
+                    <video width="600" controls>
+                        <source src="{% static 'videos/game_clip.mp4' %}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+
+                    <!-- Voting results -->
+                    <div id="vote-results-106895" style="margin-top: 10px;">
+                        <p><strong>Results:</strong></p>
+                        <p>✅ Yes: <span id="yes-percentage-106895">0%</span></p>
+                        <p>❌ No: <span id="no-percentage-106895">0%</span></p>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div id="match-1208304">
+                    <h3>Arsenal vs Chelsea</h3>
+                    <h3>Was the referee's decision correct?</h3>
+                    <button onclick="submitVote('yes', 1208304)">✅ Yes</button>
+                    <button onclick="submitVote('no', 1208304)">❌ No</button>
+            
+                    <video width="600" controls>
+                        <source src="{% static 'videos/game_clip2.mp4' %}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+            
+                    <!-- Voting results -->
+                    <div id="vote-results-1208304" style="margin-top: 10px;">
+                        <p><strong>Results:</strong></p>
+                        <p>✅ Yes: <span id="yes-percentage-1208304">0%</span></p>
+                        <p>❌ No: <span id="no-percentage-1208304">0%</span></p>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div id="match-1208307">
+                    <h3>Fulham vs Tottenham</h3>
+                    <h3>Should a red card have been given?</h3>
+                    <button onclick="submitVote('yes', 1208307)">✅ Yes</button>
+                    <button onclick="submitVote('no', 1208307)">❌ No</button>
+            
+                    <video width="600" controls>
+                        <source src="{% static 'videos/game_clip3.mp4' %}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+            
+                    <!-- Voting results -->
+                    <div id="vote-results-1208307" style="margin-top: 10px;">
+                        <p><strong>Results:</strong></p>
+                        <p>✅ Yes: <span id="yes-percentage-1208307">0%</span></p>
+                        <p>❌ No: <span id="no-percentage-1208307">0%</span></p>
+                    </div>
+            </div>
+        </div>
+    </div>
+    </div>
+            
+    {% else %}
+            <!-- Non-authenticated user content -->
+            <div class="login-prompt">
+                <p>Please <a href="{% url 'accounts:login' %}">login</a> or register as a
+                    <a href="{% url 'accounts:register_referee' %}">referee</a> /
+                    <a href="{% url 'accounts:register_user' %}">user</a> to continue.</p>
+            </div>
+    {% endif %}
+
+        <!-- Logout link for authenticated users -->
+    {% if user.is_authenticated %}
+            <a href="{% url 'accounts:logout' %}" class="logout-link">Logout</a>
+    {% endif %}
+
+    <!-- Additional scripts and styles -->
+    <style>
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+    <script type = "module" src="{% static 'accounts/js/fixtures.js' %}"></script>
+
+    <!-- Auto-refresh script -->
+    <script>
+        setInterval(function() {
+            fetch(window.location.href)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newFixtures = doc.querySelector('.fixtures-container');
+                    if (newFixtures) {
+                        document.querySelector('.fixtures-container').innerHTML = newFixtures.innerHTML;
+                    }
+                })
+                .catch(error => console.error('Error refreshing fixtures:', error));
+        }, 60000); // 60 seconds
+    </script>
+
+
+    <script>
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM loaded, attempting to load referee data");
+        if (document.getElementById('myPerformanceContainer')) {
+            loadMyLatestPerformance();
+    } else {
+        console.log("Performance container not found");
+    }
+});
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadMostRecentMatchRating();
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                const root = document.getElementById('fixtures-root');
+                if (!root) {
+                    console.error('Could not find fixtures-root element');
+                    return;
+                }
+                
+
+            } catch (error) {
+                console.error('Error rendering component:', error);
+            }
+        });
+    </script>
+
+    <script>
+        function sendMessage() {
+            const input = document.getElementById("chat-input");
+            const message = input.value.trim();
+            if (message) {
+                const chatBox = document.getElementById("messages");
+                const newMessage = document.createElement("p");
+                newMessage.textContent = "{{ user.username }}: " + message;
+                chatBox.appendChild(newMessage);
+                input.value = "";
+            }
+        }
+
+        function submitVote(choice, matchId) {
+            console.log("Function called with:", choice, matchId);
+            const url = "{% url 'accounts:submit_vote' %}";
+            console.log("Vote URL: ", url);  // Log the URL to see if it's being injected correctly
+
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `choice=${choice}&match_id=${matchId}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                document.getElementById(`yes-percentage-${matchId}`).textContent = data.yes + "%";
+                document.getElementById(`no-percentage-${matchId}`).textContent = data.no + "%";
+
+                console.log("Updated percentages:", data.yes + "%", data.no + "%");
+            })
+            .catch(error => console.error("Error:", error));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const recordBtn = document.getElementById("record-btn");
+            if (recordBtn)  {
+                let mediaRecorder;
+                let audioChunks = [];
+                
+                recordBtn.addEventListener("click", async () => {
+                    if (!mediaRecorder || mediaRecorder.state === "inactive") {
+                        try {
+                            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                            mediaRecorder = new MediaRecorder(stream);
+
+                            mediaRecorder.ondataavailable = event => {
+                                audioChunks.push(event.data);
+                            };
+
+                            mediaRecorder.onstop = () => {
+                                const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+                                const audioUrl = URL.createObjectURL(audioBlob);
+                                
+                                const audioPreview = document.getElementById("audio-preview");
+                                const sendAudio = document.getElementById("send-audio");
+                                
+                                if (audioPreview) audioPreview.src = audioUrl;
+                                if (audioPreview) audioPreview.style.display = "block";
+                                if (sendAudio) sendAudio.style.display = "inline";
+                            };
+
+                            mediaRecorder.start();
+                            recordBtn.textContent = "⏹ Stop Recording";
+                            audioChunks = [];
+                        } catch (error) {
+                            console.error("Error accessing microphone:", error);
+                            alert("Could not access microphone. Please check permissions.");
+                        }
+                    } else {
+                        mediaRecorder.stop();
+                        recordBtn.textContent = "🎤 Record Audio";
+                    }
+                });
+            }
+        });
+
+
+
+
+        // Match details handling
+        function showMatchDetails(matchId) {
+            const modal = document.getElementById('match-details-modal');
+            const content = document.getElementById('match-details-content');
+            
+            // Show the modal
+            modal.style.display = 'block';
+            content.innerHTML = '<div class="loading" style="text-align: center; padding: 20px;">Loading match details...</div>';
+            
+            console.log('Fetching match details for ID:', matchId);
+            
+            // Load match details via AJAX
+            fetch(`/api/match/${matchId}/`)
+                .then(response => {
+                    console.log('API Response status:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Match data received:', data);
+                    // Format and display match details
+                    content.innerHTML = formatMatchDetails(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching match details:', error);
+                    content.innerHTML = `
+                        <p style="color: red; text-align: center;">
+                            Error loading match details. Please try again.
+                        </p>
+                        <p style="color: #666; text-align: center; font-size: 12px;">
+                            Error details: ${error.message}
+                        </p>
+                    `;
+                });
+}
+
+        function closeMatchDetails() {
+            const modal = document.getElementById('match-details-modal');
+            modal.style.display = 'none';
+        }
+
+        function formatMatchDetails(match) {
+            return `
+                <h3 style="text-align: center; margin-bottom: 20px;">Match Details</h3>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div style="text-align: center; width: 40%;">
+                        <img src="${match.teams.home.logo}" alt="${match.teams.home.name}" style="width: 60px; height: 60px;">
+                        <h4>${match.teams.home.name}</h4>
+                    </div>
+                    
+                    <div style="text-align: center; font-size: 24px; font-weight: bold;">
+                        ${match.goals.home} - ${match.goals.away}
+                    </div>
+                    
+                    <div style="text-align: center; width: 40%;">
+                        <img src="${match.teams.away.logo}" alt="${match.teams.away.name}" style="width: 60px; height: 60px;">
+                        <h4>${match.teams.away.name}</h4>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 15px; text-align: center;">
+                    <p><strong>Date:</strong> ${new Date(match.fixture.date).toLocaleString()}</p>
+                    <p><strong>Venue:</strong> ${match.fixture.venue.name}</p>
+                    <p><strong>Referee:</strong> ${match.fixture.referee || 'Not available'}</p>
+                    <p><strong>Status:</strong> ${match.fixture.status.long}</p>
+                </div>
+                
+                ${match.events ? renderEvents(match.events) : ''}
+                ${match.lineups ? renderLineups(match.lineups) : ''}
+                ${match.statistics ? renderStats(match.statistics) : ''}
+            `;
+        }
+
+        // Helper functions to render different parts of match data
+        function renderEvents(events) {
+            if (!events || events.length === 0) return '';
+            
+            let html = '<h4 style="margin-top: 20px;">Key Events</h4><ul style="list-style-type: none; padding: 0;">';
+            
+            events.forEach(event => {
+                let icon = '⚽';
+                if (event.type === 'Card') icon = event.detail === 'Yellow Card' ? '🟨' : '🟥';
+                if (event.type === 'subst') icon = '🔄';
+                
+                html += `
+                    <li style="padding: 5px 0; border-bottom: 1px solid #eee;">
+                        ${icon} ${event.time.elapsed}' - ${event.player.name} 
+                        (${event.team.name})
+                    </li>
+                `;
+            });
+            
+            return html + '</ul>';
+        }
+
+        function renderLineups(lineups) {
+            if (!lineups || lineups.length === 0) return '';
+            
+            let html = '<h4 style="margin-top: 20px;">Starting Lineups</h4>';
+            
+            lineups.forEach(team => {
+                html += `
+                    <div style="margin-bottom: 15px;">
+                        <h5>${team.team.name}</h5>
+                        <p><strong>Formation:</strong> ${team.formation}</p>
+                        <p><strong>Coach:</strong> ${team.coach.name}</p>
+                        <div style="margin-top: 10px;">
+                            <strong>Starting XI:</strong>
+                            <ol style="padding-left: 20px;">
+                                ${team.startXI.map(player => 
+                                    `<li>${player.player.number} - ${player.player.name} (${player.player.pos || 'N/A'})</li>`
+                                ).join('')}
+                            </ol>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            return html;
+        }
+
+        function renderStats(statistics) {
+            if (!statistics || statistics.length === 0) return '';
+            
+            let html = '<h4 style="margin-top: 20px;">Match Statistics</h4>';
+            html += '<table style="width: 100%; border-collapse: collapse;">';
+            
+            // Find the first team with statistics
+            const firstTeamWithStats = statistics.find(team => team.statistics && team.statistics.length > 0);
+            
+            if (firstTeamWithStats) {
+                // Create rows for each statistic type
+                firstTeamWithStats.statistics.forEach(stat => {
+                    html += `<tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px; text-align: right; width: 33%;">
+                            ${statistics[0].statistics.find(s => s.type === stat.type)?.value || '0'}
+                        </td>
+                        <td style="padding: 8px; text-align: center; font-weight: bold; width: 33%;">
+                            ${stat.type}
+                        </td>
+                        <td style="padding: 8px; text-align: left; width: 33%;">
+                            ${statistics[1].statistics.find(s => s.type === stat.type)?.value || '0'}
+                        </td>
+                    </tr>`;
+                });
+            }
+            
+            return html + '</table>';
+        }
+
+        // When clicking outside the modal content, close it
+        window.onclick = function(event) {
+            const modal = document.getElementById('match-details-modal');
+            if (event.target === modal) {
+                closeMatchDetails();
+            }
+};
+const csrftoken = getCookie('csrftoken');
+console.log("CSRF Token value:", csrftoken);
+
+if (!csrftoken) {
+    console.error("CSRF token not found!");
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+function submitRefereeRating(matchId, rating) {
+    const url = `rate-referee/${matchId}/`;  
+    const csrftoken = getCookie('csrftoken');  
+    
+    if (!csrftoken) {
+        console.error("CSRF token not found in the DOM.");
+        return;
+    }
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken":  csrftoken,
+            "Content-Type": "application/json",  // JSON content type
+            "X-Requested-With": "XMLHttpRequest"  // Identifies as AJAX request
+        },
+        body: JSON.stringify({ rating: rating })  
+    })
+    .then(response => {
+        // Checks if the response is JSON before parsing
+        const contentType = response.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            return response.json();
+        } else {
+            // If not JSON, throw an error to be caught by the catch block
+            throw new Error("Server returned non-JSON response");
+        }
+    })
+    .then(data => {
+        const statusEl = document.getElementById(`rating-status-${matchId}`);
+        if (data.error) {
+            statusEl.textContent = data.error;
+            statusEl.style.color = "#e53e3e";
+        } else {
+            // Updated to match the structure of new JSON response
+            statusEl.textContent = data.message || "Rating submitted successfully";
+            
+            statusEl.style.color = "#38a169";
+            
+            // Update star colors
+            const stars = document.querySelectorAll(`.rating-star[data-match="${matchId}"]`);
+            stars.forEach(star => {
+                const value = parseInt(star.dataset.value);
+                star.style.color = value <= rating ? "#f6ad55" : "#a0aec0";
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Error submitting rating:", error);
+        document.getElementById(`rating-status-${matchId}`).textContent = "Error submitting rating";
+        document.getElementById(`rating-status-${matchId}`).style.color = "#e53e3e";
+    });
+}
+
+function highlightStars(star) {
+    const value = parseInt(star.dataset.value);
+    const matchId = star.dataset.match;
+    const stars = document.querySelectorAll(`.rating-star[data-match="${matchId}"]`);
+    
+    stars.forEach(s => {
+        const starValue = parseInt(s.dataset.value);
+        s.style.color = starValue <= value ? "#f6ad55" : "#a0aec0";
+    });
+}
+
+function resetStars(star) {
+    const matchId = star.dataset.match;
+    const stars = document.querySelectorAll(`.rating-star[data-match="${matchId}"]`);
+    
+    // Reset to default color unless we have a saved rating
+    stars.forEach(s => {
+        s.style.color = "#a0aec0";
+    });
+    
+    // Check if we have stored the user's previous rating somewhere
+    // This would need to be implemented to persist the selected rating
+}
+
+// Function to toggle the rating summary visibility
+function toggleRatingSummary() {
+    const container = document.getElementById('refereeSummaryContainer');
+        
+    if (container.style.display === 'none') {
+        container.style.display = 'block';
+        loadRefereeRatings();
+    } else {
+        container.style.display = 'none';
+    }
+}
+    
+function loadRefereeRatings() {
+    const summaryContent = document.getElementById('refereeSummaryContent');
+        
+    // Add loading indicator
+    summaryContent.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+            <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #3182ce; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top: 10px; color: #4a5568;">Loading ratings summary...</p>
+        </div>
+    `;
+        
+    // Make AJAX request
+    fetch('/accounts/get-referee-ratings-summary/')
+        .then(response => response.json())
+        .then(data => {
+            // Build HTML from the JSON data
+            let html = buildRatingsTable(data.referees);
+            summaryContent.innerHTML = html;
+        })
+        .catch(error => {
+            summaryContent.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #e53e3e;">
+                    <p>Error loading ratings summary. Please try again.</p>
+                </div>
+            `;
+            console.error('Error loading referee ratings:', error);
+        });
+}
+
+function buildRatingsTable(referees) {
+    if (!referees || referees.length === 0) {
+        return '<p>No referee ratings available.</p>';
+    }
+    
+    let html = `
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+                <tr style="background-color: #f7fafc;">
+                    <th style="padding: 12px; text-align: left; border-bottom: 1px solid #e2e8f0;">Referee</th>
+                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e2e8f0;">Average Rating</th>
+                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e2e8f0;">Matches Rated</th>
+                    <th style="padding: 12px; text-align: center; border-bottom: 1px solid #e2e8f0;">Total Ratings</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    referees.forEach((referee, index) => {
+        const rowBg = index % 2 === 0 ? '' : 'background-color: #f7fafc;';
+        let ratingClass = '';
+        
+        if (referee.avg_rating !== null) {
+            if (referee.avg_rating >= 7.5) ratingClass = 'background-color: #c6f6d5; color: #22543d;';
+            else if (referee.avg_rating >= 5) ratingClass = 'background-color: #fefcbf; color: #744210;';
+            else ratingClass = 'background-color: #fed7d7; color: #742a2a;';
+        }
+        
+        html += `
+            <tr style="border-bottom: 1px solid #e2e8f0; ${rowBg}">
+                <td style="padding: 12px;">${referee.referee_name}</td>
+                <td style="padding: 12px; text-align: center;">
+                    ${referee.avg_rating !== null ? 
+                        `<span style="padding: 4px 8px; display: inline-block; border-radius: 9999px; ${ratingClass}">
+                            ${referee.avg_rating.toFixed(1)}/10
+                        </span>` : 
+                        '<span style="color: #a0aec0;">No ratings</span>'}
+                </td>
+                <td style="padding: 12px; text-align: center;">${referee.total_matches_rated}</td>
+                <td style="padding: 12px; text-align: center;">${referee.total_ratings}</td>
+            </tr>
+        `;
+    });
+    
+    html += `
+            </tbody>
+        </table>
+    `;
+    
+    return html;
+}
+
+
+
+function loadMostRecentMatchRating() {
+    const container = document.getElementById('recentMatchContainer');
+    
+    if (!container) return;
+    
+    // Add loading indicator
+    container.innerHTML = `
+        <div style="text-align: center; padding: 20px;">
+            <div style="display: inline-block; width: 30px; height: 30px; border: 3px solid #3182ce; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="margin-top: 10px; color: #4a5568;">Loading recent match data...</p>
+        </div>
+    `;
+    
+    // Fetch recent match data
+    fetch('/most-recent-match-rating/')
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px; color: #718096;">
+                        <p>${data.message || 'No recent match data available'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const match = data.match;
+            
+            // Create rating color class
+            let ratingClass = '';
+            if (match.referee.avg_rating) {
+                if (match.referee.avg_rating >= 7.5) ratingClass = 'background-color: #c6f6d5; color: #22543d;';
+                else if (match.referee.avg_rating >= 5) ratingClass = 'background-color: #fefcbf; color: #744210;';
+                else ratingClass = 'background-color: #fed7d7; color: #742a2a;';
+            }
+            
+            container.innerHTML = `
+                <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
+                    <div style="background-color: #2d3748; color: white; padding: 12px 16px;">
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 600;">Recent Match Rating</h3>
+                    </div>
+                    
+                    <div style="padding: 16px;">
+                        <!-- Match Details -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <div style="text-align: center; width: 40%;">
+                                <div style="font-weight: 600; font-size: 16px;">${match.home_team.name}</div>
+                                <div style="font-size: 12px; color: #718096; margin-top: 4px;">
+                                    Yellow: ${match.home_team.yellow_cards} | Red: ${match.home_team.red_cards}
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; font-weight: 700; font-size: 24px; width: 20%;">
+                                ${match.home_team.score} - ${match.away_team.score}
+                            </div>
+                            
+                            <div style="text-align: center; width: 40%;">
+                                <div style="font-weight: 600; font-size: 16px;">${match.away_team.name}</div>
+                                <div style="font-size: 12px; color: #718096; margin-top: 4px;">
+                                    Yellow: ${match.away_team.yellow_cards} | Red: ${match.away_team.red_cards}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; font-size: 14px; color: #4a5568; margin-bottom: 16px;">
+                            ${match.date} | ${match.venue} | ${match.status}
+                        </div>
+                        
+                        <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Referee: ${match.referee.name}</div>
+                                <div style="display: flex; align-items: center;">
+                                    <div style="margin-right: 16px;">
+                                        <span style="font-size: 14px; color: #4a5568;">Rating:</span>
+                                        ${match.referee.avg_rating !== null ? 
+                                            `<span style="padding: 2px 8px; margin-left: 5px; display: inline-block; border-radius: 9999px; ${ratingClass}">
+                                                ${match.referee.avg_rating.toFixed(1)}/10
+                                            </span>` : 
+                                            '<span style="color: #a0aec0; margin-left: 5px;">No ratings</span>'}
+                                    </div>
+                                    <div style="font-size: 14px; color: #4a5568;">
+                                        Based on ${match.referee.total_ratings} rating${match.referee.total_ratings !== 1 ? 's' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Match Stats -->
+                            <div style="display: flex; justify-content: space-between; margin-top: 16px; padding: 12px; background-color: #f7fafc; border-radius: 6px;">
+                                <div style="text-align: center; flex: 1;">
+                                    <div style="font-size: 20px; font-weight: 600; color: #ecc94b;">${match.stats.yellow_cards_total}</div>
+                                    <div style="font-size: 12px; color: #4a5568;">Yellow Cards</div>
+                                </div>
+                                <div style="text-align: center; flex: 1;">
+                                    <div style="font-size: 20px; font-weight: 600; color: #f56565;">${match.stats.red_cards_total}</div>
+                                    <div style="font-size: 12px; color: #4a5568;">Red Cards</div>
+                                </div>
+                                <div style="text-align: center; flex: 1;">
+                                    <div style="font-size: 20px; font-weight: 600; color: #4299e1;">${match.stats.penalties_given}</div>
+                                    <div style="font-size: 12px; color: #4a5568;">Penalties</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('Error loading recent match data:', error);
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #e53e3e;">
+                    <p>Error loading recent match data. Please try again.</p>
+                </div>
+            `;
+        });
+
+
+
+}
+    // Add this animation for the loading spinner
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    `;
+
+function loadMyLatestPerformance() {
+    console.log("loadMyLatestPerformance function called");
+    const container = document.getElementById('myPerformanceContainer');
+    
+    if (!container) {
+        console.error("Container not found");
+        return;
+    }
+    
+    fetch('/my-latest-performance/')
+        .then(response => response.json())
+        .then(data => {
+            console.log("Data received:", data);
+            
+            if (!data.success) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <p style="color: #4a5568; font-size: 16px;">${data.message || 'No performance data available'}</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const match = data.match;
+            
+            // Creates rating color class - checksl if avg_rating exists first
+            let ratingDisplay = '<span style="color: #a0aec0;">No ratings yet</span>';
+            if (match.ratings.avg_rating) {
+                let ratingClass = '';
+                if (match.ratings.avg_rating >= 7.5) ratingClass = 'background-color: #c6f6d5; color: #22543d;';
+                else if (match.ratings.avg_rating >= 5) ratingClass = 'background-color: #fefcbf; color: #744210;';
+                else ratingClass = 'background-color: #fed7d7; color: #742a2a;';
+                
+                ratingDisplay = `<span style="padding: 2px 8px; display: inline-block; border-radius: 9999px; ${ratingClass}">
+                                    ${match.ratings.avg_rating.toFixed(1)}/10
+                                </span>`;
+            }
+            
+            container.innerHTML = `
+                <div style="background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
+                    <div style="background-color: #2d3748; color: white; padding: 12px 16px;">
+                        <h3 style="margin: 0; font-size: 16px; font-weight: 600;">My Latest Match</h3>
+                    </div>
+                    
+                    <div style="padding: 16px;">
+                        <!-- Match Details -->
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <div style="text-align: center; width: 40%;">
+                                <div style="font-weight: 600; font-size: 16px;">${match.home_team.name}</div>
+                                <div style="font-size: 12px; color: #718096; margin-top: 4px;">
+                                    Yellow: ${match.home_team.yellow_cards} | Red: ${match.home_team.red_cards}
+                                </div>
+                            </div>
+                            
+                            <div style="text-align: center; font-weight: 700; font-size: 24px; width: 20%;">
+                                ${match.home_team.score} - ${match.away_team.score}
+                            </div>
+                            
+                            <div style="text-align: center; width: 40%;">
+                                <div style="font-weight: 600; font-size: 16px;">${match.away_team.name}</div>
+                                <div style="font-size: 12px; color: #718096; margin-top: 4px;">
+                                    Yellow: ${match.away_team.yellow_cards} | Red: ${match.away_team.red_cards}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: center; font-size: 14px; color: #4a5568; margin-bottom: 16px;">
+                            ${match.date} | ${match.venue} | ${match.status}
+                        </div>
+                        
+                        <div style="margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 16px;">
+                            <div style="margin-bottom: 12px;">
+                                <div style="font-weight: 600; margin-bottom: 4px;">Your Performance Rating</div>
+                                <div style="display: flex; align-items: center;">
+                                    <div style="margin-right: 16px;">
+                                        <span style="font-size: 14px; color: #4a5568;">Rating:</span>
+                                        ${ratingDisplay}
+                                    </div>
+                                    <div style="font-size: 14px; color: #4a5568;">
+                                        Based on ${match.ratings.total_ratings} rating${match.ratings.total_ratings !== 1 ? 's' : ''}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Match Stats -->
+                            <div style="display: flex; justify-content: space-between; margin-top: 16px; padding: 12px; background-color: #f7fafc; border-radius: 6px;">
+                                <div style="text-align: center; flex: 1;">
+                                    <div style="font-size: 20px; font-weight: 600; color: #ecc94b;">${match.stats.yellow_cards_total}</div>
+                                    <div style="font-size: 12px; color: #4a5568;">Yellow Cards</div>
+                                </div>
+                                <div style="text-align: center; flex: 1;">
+                                    <div style="font-size: 20px; font-weight: 600; color: #f56565;">${match.stats.red_cards_total}</div>
+                                    <div style="font-size: 12px; color: #4a5568;">Red Cards</div>
+                                </div>
+                                <div style="text-align: center; flex: 1;">
+                                    <div style="font-size: 20px; font-weight: 600; color: #4299e1;">${match.stats.penalties_given}</div>
+                                    <div style="font-size: 12px; color: #4a5568;">Penalties</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        })
+        .catch(error => {
+            console.error('Error loading performance data:', error);
+            container.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: #e53e3e;">
+                    <p>Error loading your performance data: ${error.message}</p>
+                </div>
+            `;
+        });
+}
+
+    </script>
+
+    <!-- Match Details Modal -->
+    <div id="match-details-modal" style="
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    ">
+    <div style="
+        background-color: white;
+        margin: 10% auto;
+        padding: 20px;
+        width: 70%;
+        max-width: 700px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    ">
+        <span onclick="closeMatchDetails()" style="
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        ">&times;</span>
+        
+        <div id="match-details-content">
+            <!-- Match details will be loaded here -->
+            <div class="loading" style="text-align: center; padding: 20px;">
+                Loading match details...
+            </div>
+        </div>
+    </div>
+    </div>
+{% endif %}
+{% endblock %}

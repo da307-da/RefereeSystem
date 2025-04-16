@@ -1,0 +1,33 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Referee Profile{% endblock %}
+
+{% block content %}
+    <h1>Referee Profile</h1>
+    <div class="profile-container">
+        <div>
+            {% if user.profile_picture %}
+                {% if user.profile_picture_approved %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profile Picture" width="150">
+                {% else %}
+                    <img src="{% static 'images/default-profile.png' %}" alt="Pending Approval" width="150">
+                {% endif %}
+            {% else %}
+                <img src="{% static 'images/default-profile.png' %}" alt="Default Profile Picture" width="150">
+            {% endif %}
+        </div>
+
+    {% if user.user_type == 'referee' and not user.profile_picture_approved %}
+        <p style="color: red;"><strong>⚠ Your profile picture is pending approval.</strong></p>
+    {% endif %}
+
+        <p><strong>Full Name:</strong> {{ referee.get_full_name }}</p>
+        <p><strong>Age:</strong> {{ referee.age }}</p>
+        <p><strong>Nationality:</strong> {{ referee.nationality }}</p>
+        <p><strong>Years of Experience:</strong> {{ referee.years_of_experience}}</p>
+    </div>
+
+    <a href="{% url 'accounts:upload_profile_picture' %}" class="upload-button">Upload New Profile Picture</a>
+
+    <a href="{% url 'accounts:home' %}" class="back-button">Back to Dashboard</a>
+{% endblock %}

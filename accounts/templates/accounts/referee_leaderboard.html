@@ -1,0 +1,81 @@
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-2">Referee Performance Leaderboard</h1>
+    <h2 class="text-gray-600 mb-6">{{ season }} Season</h2>
+
+    <div class="overflow-x-auto rounded-lg shadow">
+        <table class="min-w-full bg-white">
+            <thead class="bg-gray-800 text-black">
+                <tr>
+                    <th class="py-3 px-4 text-left">Rank</th>
+                    <th class="py-3 px-4 text-left">Referee</th>
+                    <th class="py-3 px-4 text-center">Matches</th>
+                    <th class="py-3 px-4 text-center">Avg Rating</th>
+                    <th class="py-3 px-4 text-center">Yellow Cards</th>
+                    <th class="py-3 px-4 text-center">Red Cards</th>
+                    <th class="py-3 px-4 text-center">Penalties</th>
+                    <th class="py-3 px-4 text-center">Poor Decisions</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for ref in leaderboard %}
+                    <tr class="border-b hover:bg-gray-100 {% if forloop.counter <= 3 %}bg-blue-50{% elif forloop.counter >= leaderboard|length|add:-2 %}bg-red-50{% endif %}">
+                        <td class="py-3 px-4 font-semibold">{{ forloop.counter }}</td>
+                        <td class="py-3 px-4">{{ ref.name }}</td>
+                        <td class="py-3 px-4 text-center">{{ ref.matches }}</td>
+                        <td class="py-3 px-4 text-center">
+                            {% if ref.avg_rating %}
+                                <span class="px-3 py-1 rounded-full 
+                                    {% if ref.avg_rating >= 7.5 %}bg-green-200 text-green-800
+                                    {% elif ref.avg_rating >= 5 %}bg-yellow-200 text-yellow-800
+                                    {% else %}bg-red-200 text-red-800{% endif %}">
+                                    {{ ref.avg_rating|floatformat:1 }}/10
+                                </span>
+                            {% else %}
+                                <span class="text-gray-400">No ratings</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            {{ ref.yellow_cards }} ({{ ref.yellow_per_match|floatformat:1 }}/match)
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            {{ ref.red_cards }} ({{ ref.red_per_match|floatformat:1 }}/match)
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            {{ ref.penalties }} ({{ ref.penalties_per_match|floatformat:1 }}/match)
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            {{ref.poor_decisions}} ({{ref.poor_decisions_per_match|floatformat:1 }}/match)
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="7" class="py-8 text-center text-gray-500">No referee data available for the current season.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="mt-6">
+        <h3 class="font-semibold mb-2">Legend</h3>
+        <div class="flex flex-wrap gap-4">
+            <div class="flex items-center">
+                <span class="w-4 h-4 inline-block rounded-full bg-green-200 mr-2"></span>
+                <span>Good (7.5-10)</span>
+            </div>
+            <div class="flex items-center">
+                <span class="w-4 h-4 inline-block rounded-full bg-yellow-200 mr-2"></span>
+                <span>Average (5-7.4)</span>
+            </div>
+            <div class="flex items-center">
+                <span class="w-4 h-4 inline-block rounded-full bg-red-200 mr-2"></span>
+                <span>Poor (0-4.9)</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

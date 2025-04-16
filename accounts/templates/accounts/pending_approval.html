@@ -1,0 +1,10 @@
+<!-- accounts/templates/accounts/pending_approval.html -->
+{% extends 'accounts/base.html' %}
+
+{% block title %}Pending Approval - Referee System{% endblock %}
+
+{% block content %}
+<h2>Account Pending Approval</h2>
+<p>Your account is currently pending admin approval. You will be able to access your profile once approved.</p>
+<a href="{% url 'accounts:login' %}">Return to Home</a>
+{% endblock %}

@@ -1,0 +1,210 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}Register User - Referee System{% endblock %}
+
+{% block content %}
+<div class="content-wrapper">
+    <div class="form-card">
+        <h1>Register as a User</h1>
+        
+        {% if form.errors %}
+        <div class="error-summary">
+            Please correct the errors below.
+        </div>
+        {% endif %}
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-field">
+                <label for="{{ form.username.id_for_label }}">Username</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                <ul class="errorlist">
+                    {% for error in form.username.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if form.username.help_text %}
+                <p class="help-text">{{ form.username.help_text }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="form-field">
+                <label for="{{ form.email.id_for_label }}">Email address</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <ul class="errorlist">
+                    {% for error in form.email.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </div>
+            
+            <div class="form-field">
+                <label for="{{ form.password1.id_for_label }}">Password</label>
+                {{ form.password1 }}
+                {% if form.password1.errors %}
+                <ul class="errorlist">
+                    {% for error in form.password1.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if form.password1.help_text %}
+                <div class="password-requirements">
+                    {{ form.password1.help_text }}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-field">
+                <label for="{{ form.password2.id_for_label }}">Password confirmation</label>
+                {{ form.password2 }}
+                {% if form.password2.errors %}
+                <ul class="errorlist">
+                    {% for error in form.password2.errors %}
+                    <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                {% if form.password2.help_text %}
+                <p class="help-text">{{ form.password2.help_text }}</p>
+                {% endif %}
+            </div>
+            
+            <button type="submit" class="login-button" style="background-color: rgb(37, 33, 247); ">Register</button>
+        </form>
+        
+        <div class="account-options">
+            <p>Already have an account?</p>
+            <a href="{% url 'accounts:login' %}" class="account-link">Login here</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #010628;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        color: white;
+    }
+    
+    .content-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 70vh;
+        padding: 20px;
+    }
+    
+    .form-card {
+        background-color: #150f63;
+        border-radius: 5px;
+        padding: 30px;
+        width: 100%;
+        max-width: 500px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border: 2px solid white;
+
+    }
+    
+    h1 {
+        text-align: center;
+        color: white;
+        margin-bottom: 30px;
+        font-size: 28px;
+    }
+    
+    .form-field {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        display: block;
+        color: white;
+        margin-bottom: 5px;
+        text-align: center;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+    
+    .login-button {
+        background-color: #3949ab;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 12px;
+        font-size: 16px;
+        width: 100%;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    
+    .login-button:hover {
+        background-color: #303f9f;
+    }
+    
+    .errorlist {
+        color: #ff6b6b;
+        font-weight: bold;
+        list-style-type: none;
+        padding-left: 0;
+        margin-top: 5px;
+        font-size: 14px;
+    }
+    
+    .account-options {
+        text-align: center;
+        margin-top: 20px;
+    }
+    
+    .account-options p {
+        margin-bottom: 5px;
+        color: white;
+    }
+    
+    .account-link {
+        color: #7986cb;
+        text-decoration: none;
+    }
+    
+    .account-link:hover {
+        text-decoration: underline;
+    }
+    
+    .help-text, 
+    .password-requirements {
+        color: white;
+        font-size: 13px;
+        margin-top: 5px;
+    }
+    
+    .password-requirements ul {
+        padding-left: 20px;
+    }
+    
+    .error-summary {
+        background-color: rgba(255, 87, 87, 0.2);
+        border: 1px solid #ff5757;
+        color: white;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        text-align: center;
+    }
+</style>
+{% endblock %}

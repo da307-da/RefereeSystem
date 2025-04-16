@@ -1,0 +1,99 @@
+<!-- referee_list.html -->
+{% extends 'accounts/base.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-6">Premier League Referees</h1>
+    <div class="overflow-x-auto">
+        <table class="min-w-full bg-white table-fixed">
+            <thead>
+                <tr>
+                    <th class="w-1/7 px-8 py-3 border-b-2 border-gray-300 text-left">Name</th>
+                    <th class="w-1/7 px-8 py-3 border-b-2 border-gray-300 text-right">Games</th>
+                    <th class="w-1/7 px-8 py-3 border-b-2 border-gray-300 text-right">Yellow Cards</th>
+                    <th class="w-1/7 px-8 py-3 border-b-2 border-gray-300 text-right">Red Cards</th>
+                    <th class="w-1/7 px-8 py-3 border-b-2 border-gray-300 text-right">Penalties</th>
+                    <th class="w-1/7 px-8 py-3 border-b-2 border-gray-300 text-right">Penalties per Game</th>
+                    <th class="w-1/7 px-8 py-3 border-b-2 border-gray-300 text-right">Rating</th>
+                    <th class="w-1/7 px-8 py-3 border-b-2 border-gray-300 text-right">Poor Decisions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for referee in referees %}
+                <tr>
+                    <tr {% if referee.db_record %}class="in-system"{% endif %}>
+                        <td>
+                            {% if referee.photo %}
+                                <img src="{{ referee.photo }}" alt="{{ referee.name }}" class="referee-thumb">
+                            {% endif %}
+                            {{ referee.name }}
+                        </td>
+                        <td>{{ referee.games_officiated }}</td>
+                        <td>{{ referee.yellow_cards }}</td>
+                        <td>{{ referee.red_cards }}</td>
+                        <td>{{ referee.penalties }}</td>
+                        <td>{{ referee.penalties_per_game }}</td>
+                        <td>{{ referee.poor_decisions }}</td>
+                        <td>{{ referee.poor_decisions_per_game }}</td>
+                        <td>{{ referee.performance_rating }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="9">No referee data available</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="legend">
+            <p><span class="in-system-indicator"></span> Referees registered in our system</p>
+        </div>
+    
+    <style>
+        .referee-stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        
+        .referee-stats-table th,
+        .referee-stats-table td {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .referee-stats-table th {
+            background-color: #f7fafc;
+            font-weight: 600;
+        }
+        
+        .referee-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        .in-system {
+            background-color: rgba(104, 211, 145, 0.1);
+        }
+        
+        .legend {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .in-system-indicator {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background-color: rgba(104, 211, 145, 0.1);
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+    </style>
+{% endblock %}
+

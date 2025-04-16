@@ -1,0 +1,55 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Register as Ex-Referee{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Register as an Ex-Referee</h2>
+    <div class="card mx-auto" style="max-width: 500px;">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    Please correct the errors below.
+                </div>
+                {% endif %}
+                
+                {% for field in form %}
+                <div class="mb-3 {% if field.errors %}has-error{% endif %}">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                    <ul class="errorlist">
+                        {% for error in field.errors %}
+                        <li class="{% if 'password' in field.name %}password-error{% endif %}">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                <button type="submit" class="btn btn-primary w-100">Register</button>
+            </form>
+            <p class="text-center mt-3">
+                Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Inline styles for validation errors - these will take precedence if CSS isn't loaded */
+.errorlist {
+    color: #dc3545;
+    font-weight: bold;
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 5px;
+}
+</style>
+{% endblock %}

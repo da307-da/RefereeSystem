@@ -1,0 +1,43 @@
+{% extends "accounts/base.html" %}
+
+{% block title %}Rate Referee Performance{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center">Rate Referee Performance</h2>
+    
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-header">
+            <h5>{{ match.home_team }} {{ match.get_score_display }} {{ match.away_team }}</h5>
+            <p class="mb-0">Referee: {{ match.match_referee.username }}</p>
+            <p class="mb-0">Date: {{ match.match_date|date:"d M Y" }}</p>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="{{ form.rating_score.id_for_label }}" class="form-label">Performance Rating (0-10):</label>
+                    {{ form.rating_score }}
+                    {% if form.rating_score.errors %}
+                        <div class="text-danger">{{ form.rating_score.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="mb-3">
+                    <label for="{{ form.feedback.id_for_label }}" class="form-label">Feedback:</label>
+                    {{ form.feedback }}
+                    {% if form.feedback.errors %}
+                        <div class="text-danger">{{ form.feedback.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Submit Rating</button>
+                    <a href="{% url 'accounts:ex_referee_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

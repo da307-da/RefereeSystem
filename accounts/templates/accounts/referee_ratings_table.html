@@ -1,0 +1,77 @@
+<div class="overflow-x-auto">
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="background-color: #f7fafc;">
+                <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 14px;">Referee</th>
+                <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 14px; text-align: center;">Average Rating</th>
+                <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 14px; text-align: center;">Matches Rated</th>
+                <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 14px; text-align: center;">Total Ratings</th>
+                <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 14px; text-align: center;">Highest Rating</th>
+                <th style="padding: 12px; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 14px; text-align: center;">Lowest Rating</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if referee_stats %}
+                {% for stat in referee_stats %}
+                    <tr style="border-bottom: 1px solid #e2e8f0; {% if forloop.counter|divisibleby:2 %}background-color: #f7fafc;{% endif %}">
+                        <td style="padding: 12px;">
+                            {{ stat.referee.get_full_name|default:stat.referee.username }}
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            {% if stat.avg_rating %}
+                                <span style="padding: 4px 8px; display: inline-block; border-radius: 9999px; 
+                                    {% if stat.avg_rating >= 7.5 %}background-color: #c6f6d5; color: #22543d;
+                                    {% elif stat.avg_rating >= 5 %}background-color: #fefcbf; color: #744210;
+                                    {% else %}background-color: #fed7d7; color: #742a2a;{% endif %}">
+                                    {{ stat.avg_rating|floatformat:1 }}/10
+                                </span>
+                            {% else %}
+                                <span style="color: #a0aec0;">No ratings</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px; text-align: center;">{{ stat.total_matches_rated }}</td>
+                        <td style="padding: 12px; text-align: center;">{{ stat.total_ratings }}</td>
+                        <td style="padding: 12px; text-align: center;">
+                            {% if stat.highest_rating %}
+                                {{ stat.highest_rating|floatformat:1 }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px; text-align: center;">
+                            {% if stat.lowest_rating %}
+                                {{ stat.lowest_rating|floatformat:1 }}
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="padding: 16px; text-align: center; color: #718096; font-style: italic;">
+                        No referee ratings data available
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+<div style="margin-top: 16px; padding: 12px; background-color: #f7fafc; border-radius: 4px;">
+    <h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Rating Legend</h4>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; align-items: center;">
+            <span style="width: 16px; height: 16px; display: inline-block; border-radius: 9999px; background-color: #c6f6d5; margin-right: 8px;"></span>
+            <span style="font-size: 13px;">Good (7.5-10)</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <span style="width: 16px; height: 16px; display: inline-block; border-radius: 9999px; background-color: #fefcbf; margin-right: 8px;"></span>
+            <span style="font-size: 13px;">Average (5-7.4)</span>
+        </div>
+        <div style="display: flex; align-items: center;">
+            <span style="width: 16px; height: 16px; display: inline-block; border-radius: 9999px; background-color: #fed7d7; margin-right: 8px;"></span>
+            <span style="font-size: 13px;">Poor (0-4.9)</span>
+        </div>
+    </div>
+</div>

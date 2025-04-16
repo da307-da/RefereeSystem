@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Fixtures</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h2 {
+            color: #333;
+        }
+        .match-container {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .team {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Live Matches</h2>
+    <div id="live-matches">
+        <p>Loading live matches...</p>
+    </div>
+
+    <h2>Past Matches</h2>
+    <div id="past-matches">
+        <p>Loading past matches...</p>
+    </div>
+
+    <script>
+        function fetchFixtures() {
+            $.ajax({
+                url: "/api/fixtures/",
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        // Live Matches
+                        let liveHtml = "";
+                        if (response.live_matches.length > 0) {
+                            response.live_matches.forEach(match => {
+                                liveHtml += `
+                                    <div class="match-container">
+                                        <p><span class="team">${match.teams.home.name}</span> vs <span class="team">${match.teams.away.name}</span></p>
+                                        <p>Score: ${match.goals.home ?? 0} - ${match.goals.away ?? 0}</p>
+                                    </div>`;
+                            });
+                        } else {
+                            liveHtml = "<p>No live matches currently.</p>";
+                        }
+                        $("#live-matches").html(liveHtml);
+
+                        // Past Matches
+                        let pastHtml = "";
+                        if (response.past_matches.length > 0) {
+                            response.past_matches.forEach(match => {
+                                pastHtml += `
+                                    <div class="match-container">
+                                        <p><span class="team">${match.teams.home.name}</span> vs <span class="team">${match.teams.away.name}</span></p>
+                                        <p>Final Score: ${match.goals.home ?? 0} - ${match.goals.away ?? 0}</p>
+                                        <p>Date: ${new Date(match.fixture.date).toLocaleString()}</p>
+                                    </div>`;
+                            });
+                        } else {
+                            pastHtml = "<p>No past matches available.</p>";
+                        }
+                        $("#past-matches").html(pastHtml);
+                    } else {
+                        $("#live-matches").html("<p>Error loading live matches.</p>");
+                        $("#past-matches").html("<p>Error loading past matches.</p>");
+                    }
+                },
+                error: function() {
+                    $("#live-matches").html("<p>Failed to fetch live matches.</p>");
+                    $("#past-matches").html("<p>Failed to fetch past matches.</p>");
+                }
+            });
+        }
+
+        // Fetch fixtures on page load and refresh every 30 seconds
+        $(document).ready(function() {
+            fetchFixtures();
+            setInterval(fetchFixtures, 30000);
+        });
+    </script>
+
+</body>
+</html>

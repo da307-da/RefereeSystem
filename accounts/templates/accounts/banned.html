@@ -1,0 +1,64 @@
+{% load static %}
+
+
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card border-danger">
+                <div class="card-header bg-danger text-white">
+                    <h3 class>
+                    <h3 style="margin: 0 0 16px 0; color: #2d3748; font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Account Temporarily Banned</h3>
+                    </h3>
+
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <p class="lead">Your account has been temporarily suspended from accessing the Referee Rating System.</p>
+                    </div>
+
+                    {% if ban_reason %}
+                    <h5>Reason for ban:</h5>
+                    <div class="p-3 mb-3 bg-light rounded">
+                        <p>{{ ban_reason }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if ban_until %}
+                    <h5>Ban will be lifted:</h5>
+                    <div class="p-3 mb-3 bg-light rounded">
+                        <p>{{ ban_until|date:"F j, Y, g:i a" }}</p>
+                        <p class="text-muted small">Your account will be automatically reinstated at this time.</p>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        <p>Your ban has no specified end date. Please contact an administrator for more information.</p>
+                    </div>
+                    {% endif %}
+
+                    <hr>
+
+                    <h5>What can you do?</h5>
+                    <ul>
+                        <li>If you believe this is a mistake, please contact our support team.</li>
+                        <li>Once the ban period expires, you'll regain access automatically.</li>
+                    </ul>
+
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-secondary">
+                            <i class="fas fa-sign-out-alt mr-1"></i> Log Out
+                        </a>
+                        <a href="mailto:support@refereesystem.com" class="btn btn-primary ml-2">
+                            <i class="fas fa-envelope mr-1"></i> Contact Support
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    <small>Premier League Referee System &copy; {% now "Y" %}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
