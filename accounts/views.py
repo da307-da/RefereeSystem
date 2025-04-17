@@ -65,7 +65,7 @@ def ex_referee_login(request):
 def ex_referee_dashboard(request):
     if request.user.user_type != 'ex_referee':
         messages.error(request, "You need to be logged in as an ex-referee to access this page.")
-        return redirect('home')
+        return redirect('accounts:home')
     
     # Get all matches that have a referee assigned and are finished
     matches = Match.objects.filter(
@@ -850,7 +850,7 @@ def home(request):
                 key=lambda x: x.get('fixture', {}).get('date', '')
             )
         
-        # 4. Also fetch round information for reference
+        
         rounds_url = f"https://v3.football.api-sports.io/fixtures/rounds?current=true&league={league_id}&season={current_season}"
         rounds_response = requests.get(rounds_url, headers=headers)
         if rounds_response.status_code == 200:
