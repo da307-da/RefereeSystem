@@ -204,18 +204,20 @@ class AuthenticationViewsTests(TestCase):
         }
         response = self.client.post(self.register_referee_url, step1_data)
         
-        # Should redirect to step 2
+        
         self.assertRedirects(response, reverse('accounts:register_referee_step2'))
         
-        # Check user was created
+        # Checks that user was created
         new_ref = User.objects.get(username='newreferee')
-        
+
+        #Checks details
         self.assertEqual(new_ref.user_type, 'referee')
         self.assertFalse(new_ref.is_approved)
         self.assertFalse(new_ref.registration_complete)
         
-        # Step 2: Additional details
         self.client.login(username='newreferee', password='newrefpassword123')
+
+        # Step 2: Additional details
         step2_data = {
             'nationality': 'British',
             'years_of_experience': 5,
