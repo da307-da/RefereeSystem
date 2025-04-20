@@ -82,6 +82,8 @@ def ex_referee_dashboard(request):
             )
             match.user_rating = rating.rating_score
             match.has_rated = True
+            match.feedback = rating.feedback
+
         except RefereePerformanceRating.DoesNotExist:
             match.has_rated = False
     
