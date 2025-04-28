@@ -147,3 +147,37 @@ Tasks for next week:
 .  Explore different API endpoints and test the scope of API-SPORTS. (i.e. How much data does it cover? How detailed is the data, etc.)
 . Continue working on the rest of API features that I wish to implement
 
+Week beginning 03/02/25:
+
+Monday: Searched a variety of API endpoints and the data that they returned in JSON format
+Tuesday: Began working on the view function that fetches the Premier League table from the API for all user types
+Wednesday: Showed my supervisor the API I would be using going forward, and I explained its benefits
+Thursday: Continued working on Premier League table implementation
+Friday: Premier League fixture list and result list implementation also fetched from the API
+
+Tasks for next week:
+. HTML code for actually displaying the league table that's fetched from the API
+. JavaScript functions that shows match details whenever I click on the result of a match
+
+Week beginning 10/02/2025:
+
+Monday: HTML code that displays the live Premier League table on the homepage
+Tuesday: HTML code that displays the list of fixtures and results on the homepage
+Wednesday: View function that fetches match details for a specific match from the API 
+Thursday: Same as Wednesday
+Friday: JavaScript that shows the match details pop-up when a user clicks on a specific match 
+
+Tasks for next week: 
+. Begin Ex-Referee implementation, more specifically, rating referees
+
+
+Week beginning 17/02/25:
+
+Monday: Creation of RefereePerformanceRating model that stores all rating values given by any ex-referee in my database
+Tuesday: Began implementing the rate referee function
+Wednesday: Discussed rate referee functionality with supervisor, she suggested a feedback section as well for ex-referees to provide further insight
+Thursday: Added 'feedback' attribute to my RefereePerformanceRating model 
+Friday: Created Ex-Referee Dashboard displaying all the matches that the ex-referee has rated
+
+Tasks for next week:
+. Build actual Referee table based off Ex-referee ratings
