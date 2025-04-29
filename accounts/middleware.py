@@ -1,4 +1,3 @@
-# In a new file, e.g., middleware.py
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils import timezone

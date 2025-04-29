@@ -1,13 +1,18 @@
 {% extends 'accounts/base.html' %}
 
 {% block content %}
+<style>
+    body {
+        background-color: #010628;
+    }
+</style>
 <div class="container mx-auto px-4 py-8">
-    <h1 class="text-2xl font-bold mb-2">Referee Performance Leaderboard</h1>
-    <h2 class="text-gray-600 mb-6">{{ season }} Season</h2>
+    <h1 class="text-2xl font-bold mb-2" style="color: white">Referee Performance Leaderboard</h1>
+    <h2 class="text-white-600 mb-6" style="color: white">{{ season }} Season</h2>
 
     <div class="overflow-x-auto rounded-lg shadow">
-        <table class="min-w-full bg-white">
-            <thead class="bg-gray-800 text-black">
+        <table class="min-w-full" style="background-color: #150f63; color: white">
+            <thead class="bg-gray-800 text-white">
                 <tr>
                     <th class="py-3 px-4 text-left">Rank</th>
                     <th class="py-3 px-4 text-left">Referee</th>
@@ -61,17 +66,17 @@
     </div>
     
     <div class="mt-6">
-        <h3 class="font-semibold mb-2">Legend</h3>
+        <h3 class="font-semibold mb-2" style= "color: white">Scale</h3>
         <div class="flex flex-wrap gap-4">
-            <div class="flex items-center">
+            <div class="flex items-center" style= "color: white">
                 <span class="w-4 h-4 inline-block rounded-full bg-green-200 mr-2"></span>
                 <span>Good (7.5-10)</span>
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center" style= "color: white">
                 <span class="w-4 h-4 inline-block rounded-full bg-yellow-200 mr-2"></span>
                 <span>Average (5-7.4)</span>
             </div>
-            <div class="flex items-center">
+            <div class="flex items-center" style= "color: white">
                 <span class="w-4 h-4 inline-block rounded-full bg-red-200 mr-2"></span>
                 <span>Poor (0-4.9)</span>
             </div>
