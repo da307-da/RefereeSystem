@@ -118,7 +118,6 @@ Thursday: JavaScript code for handling vote submissions and updating vote percen
 Friday: HTML frontend code for the Voting poll system with Youtube videos converted to MP4S attached
 
 Tasks for next week:
-
 . Test that the voting poll system works as expected, check for any issue with videos (Play, Pause, Rewind, Playback Speed, video quality etc)
 . Work on creating a sample Referee table
 . Research into API
@@ -177,7 +176,84 @@ Monday: Creation of RefereePerformanceRating model that stores all rating values
 Tuesday: Began implementing the rate referee function
 Wednesday: Discussed rate referee functionality with supervisor, she suggested a feedback section as well for ex-referees to provide further insight
 Thursday: Added 'feedback' attribute to my RefereePerformanceRating model 
-Friday: Created Ex-Referee Dashboard displaying all the matches that the ex-referee has rated
+Friday: JavaScript for user interaction to handle ex-referee submission
 
 Tasks for next week:
-. Build actual Referee table based off Ex-referee ratings
+. Ex-Referee dashboard page
+. Build actual Referee table based off Ex-referee ratings- visible to both Referees and Ex-referees
+
+Week beginning 24/02/25:
+
+Monday: Began implementing a page that shows a list of all the matches an ex-referee has rated
+Tuesday: Same as Monday
+Wednesday: Began real referee table implementation - worked on creating a summary table - backend
+Thursday: Continued on with referee summary table - backend
+Friday: Continued to work on the referee summary table - frontend
+
+Tasks for next week: 
+. Work on the referee leaderboard table, showing more enhanced metrics from the summary table
+
+Week beginning 03/03/25:
+
+Monday: Referee leaderboard table implementation - Backend
+Tuesday: Referee leaderboard table implementation - Backend 
+Wednesday: Discussion with supervisor on next steps after implementing the referee table
+Thursday: Referee leaderboard table implementation - Backend
+Friday: Referee leaderboard table implementation - Frontend
+
+Tasks for next week: 
+. Create a dashboard card for referees to be able to view the most recent match that they played in
+
+Week beginning 10/03/25:
+
+Monday: Began implementing the most recent match feature, filtering matches in the database for any given referee to their most recent
+Tuesday: Continued with the most recent match feature, filtering ex-referee ratings to gather ratings for the same match as the referee's requested most recent
+Wednesday: Calculated average ratings using Django's aggregate functions
+Thursday: Created JSON Dictionary, setting values to attributes within the database and completed the most recent match view function
+Friday: Began JavaScript for the most recent match function
+
+
+Tasks for next week: 
+. Complete JavaScript code
+. Begin unit testing on code
+
+Week beginning 17/03/25
+
+Monday: Finished with JavaScript code
+Tuesday: Tested referee's most recent match function to see if it showed the right information for each referee
+Wednesday: Overviewed my project in its entirety, played with each user type to verify that all their requirements have been met
+Thursday: Met with supervisor to show my current project up until this point and review whether my system is ready for testing
+Friday: Unit testing, created test models file that tests the models in my database, experienced some failed test cases 
+
+Tasks for next week:
+. Finish test models, ensuring that no test cases fail
+. Begin test views
+. Begin dissertation
+
+
+Week beginning 24/03/25:
+
+Monday: Finished test models, with all test cases passed 
+Tuesday: Began writing test views file, testing that the view functions work correctly
+Wednesday: Same as Tuesday
+Thursday: Looked into example dissertations to gauge understanding of a well formatted dissertation 
+Friday: Read marking rubric to understand what markers are looking for when marking
+
+Tasks for next week: 
+. Complete introduction 
+. Make a start on Survey of Literature Review
+
+Week beginning 31/03/25:
+
+Monday: Began introduction 
+Tuesday: Completed introduction
+Wednesday: Checked coverage report of my test file, saw that coverage was too low so wrote more test cases under test models and test views 
+Thursday: Created functionality test file
+Friday: Continued working on functionality test file
+
+Tasks for next week: 
+. Review introduction
+. Begin working survey of literature review section of the dissertation
+
+
+
