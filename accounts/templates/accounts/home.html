@@ -50,12 +50,24 @@
     }
 
     .standings-container {
-        background-color: #3182ce;
+        background-color: #150f63;
+        color: white
+    }
+    .fixtures-container {
+        background-color: #150f63
+    }
+    .fixtures-container .live-matches {
+        background-color: rgba(21, 134, 227, 0.3);
     }
     </style>
 
 </head>
-    <h1>Welcome to Ref IQ</h1>
+{% if request.path == '/' %}
+        <h1 style="text-align: center; color: white; margin-top: 50px;">Welcome to Ref IQ</h1>
+        <div class="logo-container" style="text-align: center; margin: 30px 0 50px;">
+            <img src="{% static 'images/ref-iqlogo.png' %}" alt="Ref IQ Logo" style="height: 400px; width: auto;">
+        </div>
+{% endif %}
     
     {% if user.is_authenticated %}
         <!-- Authenticated user content -->
@@ -71,27 +83,27 @@
             <!-- Premier League Standings and Fixtures -->
             <div class="content-area" style="display: flex; margin-top: 20px;">
                 <!-- Premier League Standings -->
-                <div class="standings-container" style="position: fixed; left: 10px; top: 80px; width: 20%; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 16px; margin-right: 20px; max-height: 80vh; overflow-y: auto;">
-                    <h3 style="margin: 0 0 16px 0; color: #2d3748; font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Premier League Table</h3>
+                <div class="standings-container" style="position: fixed; left: 10px; top: 80px; width: 20%; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 16px; margin-right: 20px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin: 0 0 16px 0; color: #2d3748; font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; color: white">Premier League Table</h3>
                     {% if standings %}
                         <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
                             <thead>
-                                <tr style="background-color: #ffffff; border-bottom: 1px solid #e2e8f0;">
+                                <tr style="background-color: #150f63; border-bottom: 1px solid #e2e8f0;">
                                     <th style="text-align: center; padding: 10px 5px;">Pos</th>
                                     <th style="text-align: left; padding: 10px 5px;">Team</th>
                                     <th style="text-align: center; padding: 10px 5px;">MP</th>
+                                    <th style="text-align: center; padding: 10px 5px;">Pts</th>
                                     <th style="text-align: center; padding: 10px 5px;">W</th>
                                     <th style="text-align: center; padding: 10px 5px;">D</th>
                                     <th style="text-align: center; padding: 10px 5px;">L</th>
                                     <th style="text-align: center; padding: 10px 5px;">GF</th>
                                     <th style="text-align: center; padding: 10px 5px;">GA</th>
                                     <th style="text-align: center; padding: 10px 5px;">GD</th>
-                                    <th style="text-align: center; padding: 10px 5px;">Pts</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for team in standings %}
-                                    <tr style="border-bottom: 1px solid #e2e8f0; {% if team.rank <= 4 %}background-color: rgba(104, 211, 145, 0.1);{% endif %} {% if team.rank >= 18 %}background-color: rgba(226, 74, 74, 0.1);{% endif %}">
+                                    <tr style="border-bottom: 1px solid #e2e8f0; {% if team.rank <= 5 %}background-color: rgba(21, 134, 227, 0.3); {% endif %} {% if team.rank >= 18 %}background-color: rgba(105, 36, 216, 0.3);{% endif %}">
                                         <td style="text-align: center; padding: 10px 5px; font-weight: 600;">{{ team.rank }}</td>
                                         <td style="text-align: left; padding: 10px 5px;">
                                             <div style="display: flex; align-items: center;">
@@ -100,24 +112,24 @@
                                             </div>
                                         </td>
                                         <td style="text-align: center; padding: 10px 5px;">{{ team.all.played }}</td>
+                                        <td style="text-align: center; padding: 10px 5px; font-weight: 700;">{{ team.points }}</td>
                                         <td style="text-align: center; padding: 10px 5px;">{{ team.all.win }}</td>
                                         <td style="text-align: center; padding: 10px 5px;">{{ team.all.draw }}</td>
                                         <td style="text-align: center; padding: 10px 5px;">{{ team.all.lose }}</td>
                                         <td style="text-align: center; padding: 10px 5px;">{{ team.all.goals.for }}</td>
                                         <td style="text-align: center; padding: 10px 5px;">{{ team.all.goals.against }}</td>
                                         <td style="text-align: center; padding: 10px 5px;">{{ team.goalsDiff }}</td>
-                                        <td style="text-align: center; padding: 10px 5px; font-weight: 700;">{{ team.points }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
                         <div style="margin-top: 10px; display: flex; font-size: 12px;">
                             <div style="margin-right: 15px; display: flex; align-items: center;">
-                                <span style="display: inline-block; width: 10px; height: 10px; background-color: rgba(104, 211, 145, 0.3); margin-right: 5px;"></span>
+                                <span style="display: inline-block; width: 10px; height: 10px; background-color: rgba(21, 134, 227, 0.3); margin-right: 5px;"></span>
                                 <span>Champions League</span>
                             </div>
                             <div style="display: flex; align-items: center;">
-                                <span style="display: inline-block; width: 10px; height: 10px; background-color: rgba(226, 74, 74, 0.3); margin-right: 5px;"></span>
+                                <span style="display: inline-block; width: 10px; height: 10px; background-color: rgba(105, 36, 216, 0.3); margin-right: 5px;"></span>
                                 <span>Relegation</span>
                             </div>
                         </div>
@@ -127,8 +139,8 @@
                 </div>
 
                 <!-- Fixtures Container -->
-                <div class="fixtures-container" style="position: fixed; right: 20px; top: 80px; width: 300px; background-color: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 16px; max-height: 80vh; overflow-y: auto;">
-                    <h3 style="margin: 0 0 16px 0; color: #2d3748; font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Premier League Fixtures</h3>
+                <div class="fixtures-container" style="position: fixed; right: 20px; top: 80px; width: 300px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 16px; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="margin: 0 0 16px 0; color: white; font-size: 18px; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Premier League Fixtures</h3>
                     
                     <!-- Live Matches -->
                     <div class="live-matches" style="margin-bottom: 24px;">
@@ -157,11 +169,11 @@
                     </div>
                     <!-- Upcoming Matches -->
                     <div class="upcoming-matches" style="margin-bottom: 24px;">
-                        <h4 style="color: #2d3748; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">UPCOMING MATCHES</h4>
+                        <h4 style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">UPCOMING MATCHES</h4>
                         {% if upcoming_matches %}
                             <ul class="match-list" style="list-style-type: none; padding: 0; margin: 0;">
                                 {% for match in upcoming_matches %}
-                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: #f8fafc; border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #805ad5; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
+                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: rgba(21, 134, 227, 0.3); color: white; border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #805ad5; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
                                         <div class="match-date" style="font-size: 11px; color: #718096; margin-bottom: 6px;">{{ match.fixture.date|date:"D, d M Y - H:i" }}</div>
                                         <div class="match-teams" style="display: flex; justify-content: space-between; align-items: center;">
                                             <div class="team home" style="font-weight: 500; text-align: left; width: 40%;">{{ match.teams.home.name }}</div>
@@ -179,13 +191,13 @@
 
                     <!-- Current Gameweek Matches -->
                     <div class="gameweek-matches" style="margin-bottom: 24px;">
-                        <h4 style="color: #2d3748; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">CURRENT GAMEWEEK</h4>
+                        <h4 style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">CURRENT GAMEWEEK</h4>
                         {% if past_matches %}
                             <ul class="match-list" style="list-style-type: none; padding: 0; margin: 0;">
                                 {% for match in past_matches|slice:":10" %}
-                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: #f8fafc; border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #4299e1; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
+                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: rgba(21, 134, 227, 0.3); border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #4299e1; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
                                         <div class="match-date" style="font-size: 11px; color: #718096; margin-bottom: 6px;">{{ match.fixture.date|date:"D, d M Y - H:i" }}</div>
-                                        <div class="match-teams" style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div class="match-teams" style="display: flex; color: white; justify-content: space-between; align-items: center;">
                                             <div class="team home" style="font-weight: 500; text-align: left; width: 40%;">{{ match.teams.home.name }}</div>
                                             <div class="score" style="font-weight: 700; font-size: 16px; text-align: center; width: 20%;">{{ match.goals.home }} - {{ match.goals.away }}</div>
                                             <div class="team away" style="font-weight: 500; text-align: right; width: 40%;">{{ match.teams.away.name }}</div>
@@ -226,13 +238,13 @@
 
                     <!-- Previous Gameweek Matches -->
                     <div class="previous-gameweek-matches" style="margin-bottom: 24px;">
-                        <h4 style="color: #2d3748; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">PREVIOUS GAMEWEEK</h4>
+                        <h4 style="color: #ffffff; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">PREVIOUS GAMEWEEK</h4>
                         {% if previous_gameweek_matches %}
                             <ul class="match-list" style="list-style-type: none; padding: 0; margin: 0;">
                                 {% for match in previous_gameweek_matches %}
-                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: #f8fafc; border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #a0aec0; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
+                                    <li class="match-item" onclick="showMatchDetails('{{ match.fixture.id }}')" style="background-color: rgba(21, 134, 227, 0.3); border-radius: 6px; padding: 12px; margin-bottom: 8px; border-left: 3px solid #a0aec0; cursor: pointer;" data-match-id="{{ match.fixture.id }}">
                                         <div class="match-date" style="font-size: 11px; color: #718096; margin-bottom: 6px;">{{ match.fixture.date|date:"D, d M Y - H:i" }}</div>
-                                        <div class="match-teams" style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div class="match-teams" style="display: flex; color: white; justify-content: space-between; align-items: center;">
                                             <div class="team home" style="font-weight: 500; text-align: left; width: 40%;">{{ match.teams.home.name }}</div>
                                             <div class="score" style="font-weight: 700; font-size: 16px; text-align: center; width: 20%;">{{ match.goals.home }} - {{ match.goals.away }}</div>
                                             <div class="team away" style="font-weight: 500; text-align: right; width: 40%;">{{ match.teams.away.name }}</div>
@@ -334,6 +346,36 @@
             </div>
         </div>
 
+        <div style="margin-top: 30px; background-color: #150f63; padding: 20px; border-radius: 8px; color: white;">
+            <h3 style="margin-bottom: 20px; border-bottom: 1px solid #3182ce; padding-bottom: 10px;">Fan Vote Results on Your Decisions</h3>
+            
+            <!-- Decision 1 -->
+            <div style="margin-bottom: 30px;">
+                <h4>Everton vs Nottingham Forest - Penalty Decision</h4>
+                <video width="600" controls preload="auto" controlsList="nodownload" class="referee-video" style="margin: 15px 0; border-radius: 8px;">
+                    <source src="{% static 'videos/game_clip.mp4' %}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div style="background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 8px;">
+                    <p><strong>Fan Question:</strong> Was the referee's decision correct?</p>
+                    <div style="display: flex; margin-top: 10px;">
+                        <div style="flex: 1; padding-right: 10px;">
+                            <div style="height: 30px; background-color: #38a169; border-radius: 4px; position: relative;">
+                                <div style="position: absolute; right: 10px; top: 5px; color: white; font-weight: bold;" id="yes-display-106895">67%</div>
+                            </div>
+                            <p style="text-align: center; margin-top: 5px;">✅ Yes</p>
+                        </div>
+                        <div style="flex: 1; padding-left: 10px;">
+                            <div style="height: 30px; background-color: #e53e3e; border-radius: 4px; position: relative;">
+                                <div style="position: absolute; right: 10px; top: 5px; color: white; font-weight: bold;" id="no-display-106895">33%</div>
+                            </div>
+                            <p style="text-align: center; margin-top: 5px;">❌ No</p>
+                        </div>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 14px;"><strong>Total votes:</strong> <span id="total-votes-106895">24</span></p>
+                </div>
+            </div>
+
         <!-- Profile Icon in the top right corner -->
         <div style="position: absolute; top: 20px; right: 20px;">
             <a href="{% url 'accounts:referee_profile' %}">
@@ -362,7 +404,7 @@
                     <button onclick="submitVote('yes', 106895)">✅ Yes</button>
                     <button onclick="submitVote('no', 106895)">❌ No</button>
 
-                    <video width="600" controls preload="metadata" controlsList="nodownload" class="referee-video">
+                    <video width="600" controls preload="auto" playsinline class="referee-video">
                         <source src="{% static 'videos/game_clip.mp4' %}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -382,8 +424,10 @@
                     <h3>Was the referee's decision correct?</h3>
                     <button onclick="submitVote('yes', 1208304)">✅ Yes</button>
                     <button onclick="submitVote('no', 1208304)">❌ No</button>
+
+
             
-                    <video width="600" controls preload="metadata" controlsList="nodownload" class="referee-video">
+                    <video width="600" controls preload="auto" playsinline class="referee-video">
                         <source src="{% static 'videos/game_clip2.mp4' %}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -404,7 +448,7 @@
                     <button onclick="submitVote('yes', 1208307)">✅ Yes</button>
                     <button onclick="submitVote('no', 1208307)">❌ No</button>
             
-                    <video width="600" controls preload="metadata" controlsList="nodownload" class="referee-video">
+                    <video width="600" controls preload="auto" playsinline class="referee-video">
                         <source src="{% static 'videos/game_clip3.mp4' %}" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
@@ -415,18 +459,35 @@
                         <p>✅ Yes: <span id="yes-percentage-1208307">0%</span></p>
                         <p>❌ No: <span id="no-percentage-1208307">0%</span></p>
                     </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div id="match-1208191">
+                    <h3>Tottenham vs Liverpool</h3>
+                    <h3>Was offside the correct decision here?</h3>
+                    <button onclick="submitVote('yes', 1208191)">✅ Yes</button>
+                    <button onclick="submitVote('no', 1208191)">❌ No</button>
+
+            
+                    <video width="600" controls preload="auto" playsinline class="referee-video">
+                        <source src="{% static 'videos/game_clip4.mp4' %}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+            
+                    <!-- Voting results -->
+                    <div id="vote-results-1208304" style="margin-top: 10px;">
+                        <p><strong>Results:</strong></p>
+                        <p>✅ Yes: <span id="yes-percentage-1208191">0%</span></p>
+                        <p>❌ No: <span id="no-percentage-1208191">0%</span></p>
+                    </div>
+                </div>
             </div>
+
         </div>
     </div>
     </div>
-            
-    {% else %}
-            <!-- Non-authenticated user content -->
-            <div class="login-prompt">
-                <p>Please <a href="{% url 'accounts:login' %}">login</a> or register as a
-                    <a href="{% url 'accounts:register_referee' %}">referee</a> /
-                    <a href="{% url 'accounts:register_user' %}">user</a> to continue.</p>
-            </div>
+
     {% endif %}
 
         <!-- Logout link for authenticated users -->
@@ -579,21 +640,18 @@
             }
         });
 
-
-
-
         // Match details handling
         function showMatchDetails(matchId) {
             const modal = document.getElementById('match-details-modal');
             const content = document.getElementById('match-details-content');
             
-            // Show the modal
+            // Shows the modal
             modal.style.display = 'block';
             content.innerHTML = '<div class="loading" style="text-align: center; padding: 20px;">Loading match details...</div>';
             
             console.log('Fetching match details for ID:', matchId);
             
-            // Load match details via AJAX
+            // Loads match details via AJAX
             fetch(`/api/match/${matchId}/`)
                 .then(response => {
                     console.log('API Response status:', response.status);
@@ -604,7 +662,7 @@
                 })
                 .then(data => {
                     console.log('Match data received:', data);
-                    // Format and display match details
+                    // Formats and display match details
                     content.innerHTML = formatMatchDetails(data);
                 })
                 .catch(error => {
@@ -620,6 +678,54 @@
                 });
 }
 
+    // Function to update the vote displays for referees
+    function updateRefereeVoteDisplays() {
+        // Match IDs from the HTML
+        const matchIds = [106895, 1208304, 1208307];
+    
+    // Fetch current vote percentages for each match
+    matchIds.forEach(matchId => {
+        fetch("/api/vote-results/" + matchId + "/", {
+            method: "GET",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Update the display elements
+            document.getElementById(`yes-display-${matchId}`).textContent = data.yes + "%";
+            document.getElementById(`no-display-${matchId}`).textContent = data.no + "%";
+            
+            // Update the vote count
+            document.getElementById(`total-votes-${matchId}`).textContent = data.total_votes;
+            
+            // Update the visual width of the bars based on percentages
+            const yesBarElement = document.getElementById(`yes-display-${matchId}`).parentElement;
+            const noBarElement = document.getElementById(`no-display-${matchId}`).parentElement;
+            
+            yesBarElement.style.width = data.yes + "%";
+            noBarElement.style.width = data.no + "%";
+        })
+        .catch(error => {
+            console.error(`Error fetching vote results for match ${matchId}:`, error);
+            // If the API endpoint doesn't exist, we'll just use the default values in the HTML
+        });
+    });
+}
+
+// Call this when the page loads for referees
+document.addEventListener('DOMContentLoaded', function() {
+    // Only run this for referee users
+    const userType = document.body.dataset.userType;
+    if (userType === 'referee') {
+        updateRefereeVoteDisplays();
+        
+        // Refresh vote data every 30 seconds
+        setInterval(updateRefereeVoteDisplays, 30000);
+    }
+});
+
         function closeMatchDetails() {
             const modal = document.getElementById('match-details-modal');
             modal.style.display = 'none';
@@ -627,7 +733,7 @@
 
         function formatMatchDetails(match) {
             return `
-                <h3 style="text-align: center; margin-bottom: 20px;">Match Details</h3>
+                <h3 style="text-align: center; margin-bottom: 20px; color:white; ">Match Details</h3>
                 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <div style="text-align: center; width: 40%;">

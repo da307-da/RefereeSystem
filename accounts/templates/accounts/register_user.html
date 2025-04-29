@@ -3,85 +3,88 @@
 {% block title %}Register User - Referee System{% endblock %}
 
 {% block content %}
-<div class="content-wrapper">
-    <div class="form-card">
-        <h1>Register as a User</h1>
-        
-        {% if form.errors %}
-        <div class="error-summary">
-            Please correct the errors below.
-        </div>
-        {% endif %}
-        
-        <form method="post">
-            {% csrf_token %}
-            
-            <div class="form-field">
-                <label for="{{ form.username.id_for_label }}">Username</label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                <ul class="errorlist">
-                    {% for error in form.username.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% if form.username.help_text %}
-                <p class="help-text">{{ form.username.help_text }}</p>
-                {% endif %}
-            </div>
-            
-            <div class="form-field">
-                <label for="{{ form.email.id_for_label }}">Email address</label>
-                {{ form.email }}
-                {% if form.email.errors %}
-                <ul class="errorlist">
-                    {% for error in form.email.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </div>
-            
-            <div class="form-field">
-                <label for="{{ form.password1.id_for_label }}">Password</label>
-                {{ form.password1 }}
-                {% if form.password1.errors %}
-                <ul class="errorlist">
-                    {% for error in form.password1.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% if form.password1.help_text %}
-                <div class="password-requirements">
-                    {{ form.password1.help_text }}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+            <div class="card">
+                <div class="card-header">
+                    <h1 class="text-center">Register as a User</h1>
+                </div>
+                {% if form.errors %}
+                <div class="error-summary">
+                    Please correct the errors below.
                 </div>
                 {% endif %}
+                
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="form-field">
+                        <label for="{{ form.username.id_for_label }}">Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.username.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.username.help_text %}
+                        <p class="help-text">{{ form.username.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="{{ form.email.id_for_label }}">Email address</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.email.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="{{ form.password1.id_for_label }}">Password</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.password1.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.password1.help_text %}
+                        <div class="password-requirements">
+                            {{ form.password1.help_text }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-field">
+                        <label for="{{ form.password2.id_for_label }}">Password confirmation</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                        <ul class="errorlist">
+                            {% for error in form.password2.errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                        {% if form.password2.help_text %}
+                        <p class="help-text">{{ form.password2.help_text }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <button type="submit" class="login-button" style="background-color: rgb(37, 33, 247); ">Register</button>
+                </form>
+                
+                <div class="account-options">
+                    <p>Already have an account?</p>
+                    <a href="{% url 'accounts:login' %}" class="account-link">Login here</a>
+                </div>
             </div>
-            
-            <div class="form-field">
-                <label for="{{ form.password2.id_for_label }}">Password confirmation</label>
-                {{ form.password2 }}
-                {% if form.password2.errors %}
-                <ul class="errorlist">
-                    {% for error in form.password2.errors %}
-                    <li>{{ error }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% if form.password2.help_text %}
-                <p class="help-text">{{ form.password2.help_text }}</p>
-                {% endif %}
-            </div>
-            
-            <button type="submit" class="login-button" style="background-color: rgb(37, 33, 247); ">Register</button>
-        </form>
-        
-        <div class="account-options">
-            <p>Already have an account?</p>
-            <a href="{% url 'accounts:login' %}" class="account-link">Login here</a>
-        </div>
     </div>
 </div>
 
@@ -93,7 +96,37 @@
         font-family: Arial, sans-serif;
         color: white;
     }
+    .form-control, 
+    .form-select,
+    input[type="text"], 
+    input[type="email"], 
+    input[type="password"]
+        {
+        background-color: #0a4bf0; 
+        border: 1px solid #2a4494;
+        color: white;
+        border-radius: 8px !important; 
+}
+
+    .form-control:focus, .form-select:focus {
+        background-color: #3a49a0; 
+        border-color: #4a5af8;
+        color: white;
+        box-shadow: 0 0 0 0.25rem rgba(74, 90, 248, 0.25);
+    }
+    .card-header {
+        background-color: #0d2456; 
+        width: 100%;
+        padding: 15px;
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        margin: 0;
+    }
     
+    .card-header h1 {
+        margin: 0;
+        padding: 10px 0;
+    }
     .content-wrapper {
         display: flex;
         justify-content: center;
@@ -102,7 +135,7 @@
         padding: 20px;
     }
     
-    .form-card {
+    .card {
         background-color: #150f63;
         border-radius: 5px;
         padding: 30px;

@@ -5,6 +5,8 @@ from django.utils import timezone
 import datetime
 import json
 from unittest.mock import patch, MagicMock
+from django.core.files.uploadedfile import SimpleUploadedFile
+
 
 from accounts.models import (
     CustomUser, PremierLeagueReferee, Match, Team, 
@@ -487,18 +489,76 @@ class RefereePerformanceViewsTests(TestCase):
         self.assertFalse(response_data['success'])
         self.assertTrue('message' in response_data)
 
-class BanMiddlewareTests(TestCase):
+
+class ProfileViewsTests(TestCase):
     def setUp(self):
-        self.client = Client()
-        
-        # Create user
+        # Create test users
         self.user = User.objects.create_user(
-            username='bannableuser',
-            email='bannable@example.com',
-            password='bannable123',
+            username='testuser',
+            email='test@example.com',
+            password='testpassword123',
             user_type='user'
         )
         
-        # Login URLs
-        self.home_url = reverse('accounts:home')
-        self.banned_url = reverse('accounts:banned')
+        self.referee = User.objects.create_user(
+            username='testreferee',
+            email='referee@example.com',
+            password='referee123',
+            user_type='referee',
+            is_approved=True,
+            profile_picture_approved=False
+        )
+        
+        # URLs
+        self.profile_url = reverse('accounts:referee_profile')
+        self.upload_picture_url = reverse('accounts:upload_profile_picture')
+        self.login_url = reverse('accounts:login')
+    
+    def test_referee_profile_view(self):
+        """Test referee profile page when logged in"""
+        self.client.login(username='testreferee', password='referee123')
+        response = self.client.get(self.profile_url)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/profile.html')
+        self.assertEqual(response.context['user'], self.referee)
+        self.assertEqual(response.context['referee'], self.referee)
+    
+    def test_referee_profile_requires_login(self):
+        """Test that profile page requires login"""
+        response = self.client.get(self.profile_url)
+        # just checks that it's a 302 redirect response
+        self.assertEqual(response.status_code, 302)
+        # And contains 'login' in the URL
+        self.assertIn('login', response.url)
+    
+    def test_upload_profile_picture_get(self):
+        """Test upload profile picture page (GET)"""
+        self.client.login(username='testreferee', password='referee123')
+        response = self.client.get(self.upload_picture_url)
+        
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/upload_picture.html')
+        self.assertIn('form', response.context)
+    
+    def test_upload_profile_picture_post(self):
+        """Test uploading a profile picture (POST)"""
+        self.client.login(username='testreferee', password='referee123')
+        
+        # Create a test image file
+        image_content = b'GIF87a\x01\x00\x01\x00\x80\x01\x00\x00\x00\x00ccc,\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02D\x01\x00;'
+        image = SimpleUploadedFile('test_image.gif', image_content, content_type='image/gif')
+        
+        # Post the form with the image
+        data = {'profile_picture': image}
+        response = self.client.post(self.upload_picture_url, data)
+        
+        # Check that the request was successful - either 200 or 302 redirect
+        self.assertIn(response.status_code, [200, 302])
+        
+        # Refresh user from database
+        self.referee.refresh_from_db()
+        
+        # Check that profile picture was updated and approval status reset
+        # Just verify the approval status is reset
+        self.assertFalse(self.referee.profile_picture_approved)

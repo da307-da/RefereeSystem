@@ -26,6 +26,8 @@ from django.db.models.functions import Concat
 import random
 import string
 from django.views.decorators.csrf import csrf_protect
+from django.db.models import Count, Case, When, IntegerField
+
 
 
 def register_ex_referee(request):
@@ -792,6 +794,7 @@ def home(request):
     print("====== HOME VIEW CALLED ======")
     video_url = "https://www.youtube.com/watch?v=dUep4EpJT9Q"
     
+
     # API configuration
     api_key = settings.API_KEY
     headers = {"x-apisports-key": api_key}
@@ -966,7 +969,7 @@ def get_league_standings(request):
             'success': False,
             'error': str(e)
         })
-
+        
 def register_referee(request):
     # Initialize the form variable outside the conditional blocks
     form = None
@@ -1123,6 +1126,39 @@ def submit_vote(request):
 
         #return JsonResponse({"yes": yes_percentage, "no": no_percentage})
 
+def get_vote_results(request, match_id):
+    """API endpoint to get the vote results for a specific match"""
+    # Count total votes for this match
+    vote_count = Vote.objects.filter(match_id=match_id).count()
+    
+    if vote_count == 0:
+        # If no votes, return default values
+        return JsonResponse({
+            'yes': 0,
+            'no': 0,
+            'total_votes': 0
+        })
+    
+    # Get the vote breakdown
+    vote_data = Vote.objects.filter(match_id=match_id).aggregate(
+        yes_count=Count(Case(When(choice='yes', then=1), output_field=IntegerField())),
+        no_count=Count(Case(When(choice='no', then=1), output_field=IntegerField()))
+    )
+    
+    # Calculate percentages
+    yes_count = vote_data['yes_count']
+    no_count = vote_data['no_count']
+    
+    yes_percentage = round((yes_count / vote_count) * 100)
+    no_percentage = round((no_count / vote_count) * 100)
+    
+    # Return JSON response
+    return JsonResponse({
+        'yes': yes_percentage,
+        'no': no_percentage,
+        'total_votes': vote_count
+    })
+
 def banned_view(request):
     ban_reason = request.user.ban_reason
     ban_until = request.user.ban_until
@@ -1153,7 +1189,7 @@ def upload_profile_picture(request):
         form = ProfilePictureForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             user = form.save(commit=False)
-            user.profile_picture_approved = False  # Reset approval status
+            user.profile_picture_approved = False  # Resets approval status
             user.save()
             return redirect('accounts:referee_profile')  # Redirect back to profile page
     else:
@@ -1162,21 +1198,6 @@ def upload_profile_picture(request):
     return render(request, 'accounts/upload_picture.html', {'form': form})
 
 
-class RefereeListView(ListView):
-    model = PremierLeagueReferee
-    template_name = 'accounts/referee_list.html'
-    context_object_name = 'referees'
-    ordering = ['poor_decisions', '-performance_rating']
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['current_season'] = "2024/25"
-        return context
-
-class RefereeDetailView(DetailView):
-    model = PremierLeagueReferee
-    template_name = 'accounts/referee_detail.html'
-    context_object_name = 'referee'
 
 def referee_stats_dashboard(request):
     referees = PremierLeagueReferee.objects.all().order_by('poor_decisions', '-performance_rating')
@@ -1201,11 +1222,11 @@ def match_details_api(request, match_id):
         logger.info(f"API Response Status: {response.status_code}")
 
         data = response.json()
-        logger.info(f"Full API Response: {data}")  # Log entire response
+        logger.info(f"Full API Response: {data}")  # Logs entire response
 
         if 'response' in data and isinstance(data['response'], list) and data['response']:
             logger.info("Returning match data")
-            return JsonResponse(data['response'][0])  # Send the first match object
+            return JsonResponse(data['response'][0])  # Sends the first match object
 
         logger.warning(f"No match data found for ID: {match_id}")
         return JsonResponse({"error": "Match not found"}, status=404)

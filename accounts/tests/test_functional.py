@@ -1,7 +1,7 @@
 import datetime
 import json
 from django.urls import reverse
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from accounts.models import (
@@ -177,5 +177,123 @@ class FunctionalTestCase(TestCase):
             'no'
         )
 
+class FanChatTests(TestCase):
+    def setUp(self):
+        self.client = Client()
+        
+        # Create test users
+        self.user1 = User.objects.create_user(
+            username='chatuser1',
+            email='chat1@example.com',
+            password='chat123',
+            user_type='user'
+        )
+        
+        self.user2 = User.objects.create_user(
+            username='chatuser2',
+            email='chat2@example.com',
+            password='chat123',
+            user_type='user'
+        )
+        
+        # Create some test messages
+        ChatMessage.objects.create(
+            user=self.user1,
+            content="Test message 1",
+            timestamp=timezone.now() - datetime.timedelta(minutes=10)
+        )
+        
+        ChatMessage.objects.create(
+            user=self.user2,
+            content="Test message 2",
+            timestamp=timezone.now() - datetime.timedelta(minutes=5)
+        )
+        
+        # URLs
+        self.fan_chat_url = reverse('accounts:fan_chat')
+        self.send_message_url = reverse('accounts:send_message')
+        self.get_messages_url = reverse('accounts:get_messages')
     
+    def test_fan_chat_flow(self):
+        """Test the complete fan chat flow - view, send message, get messages"""
+        # Login
+        self.client.login(username='chatuser1', password='chat123')
+        
+        # Access the fan chat page
+        response = self.client.get(self.fan_chat_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'accounts/fan_chat.html')
+        
+        # Chat messages should be in the context
+        self.assertTrue('messages' in response.context)
+        self.assertEqual(len(response.context['messages']), 2)
+        
+        # Send a new text message
+        text_data = {'content': 'New chat message from user1'}
+        text_response = self.client.post(self.send_message_url, text_data)
+        
+        # Check text message response
+        self.assertEqual(text_response.status_code, 200)
+        text_json = json.loads(text_response.content)
+        self.assertEqual(text_json['status'], 'success')
+        self.assertEqual(text_json['message']['content'], 'New chat message from user1')
+        self.assertEqual(text_json['message']['user'], 'chatuser1')
+        
+        # Verify message was saved to database
+        self.assertTrue(
+            ChatMessage.objects.filter(
+                user=self.user1,
+                content='New chat message from user1'
+            ).exists()
+        )
+        
+        # Create test audio data (mock base64 encoded audio)
+        audio_data = {
+            'audio': 'data:audio/wav;base64,SGVsbG8sIHRoaXMgaXMgYSB0ZXN0IGF1ZGlvIGZpbGU='
+        }
+        
+        # Try to send an audio message
+        audio_response = self.client.post(self.send_message_url, audio_data)
+        
+        # Check audio message response
+        # It might not work in tests but should give a valid response
+        self.assertEqual(audio_response.status_code, 200)
+        
+        # Get messages via AJAX
+        get_response = self.client.get(self.get_messages_url)
+        
+        # Check get messages response
+        self.assertEqual(get_response.status_code, 200)
+        messages_json = json.loads(get_response.content)
+        self.assertTrue('messages' in messages_json)
+        
+        # Should now be 3 messages (2 initial + 1 text we added)
+        # We won't count the audio message as it might not be successfully created in tests
+        self.assertGreaterEqual(len(messages_json['messages']), 3)
     
+    def test_fan_chat_requires_login(self):
+        """Test that fan chat requires login"""
+        # Logout to ensure not authenticated
+        self.client.logout()
+        
+        # Try to access fan chat
+        response = self.client.get(self.fan_chat_url)
+        
+        # Should redirect to login
+        self.assertEqual(response.status_code, 302)  # Redirect
+        self.assertTrue('login' in response.url.lower())
+        
+        # Try to send a message
+        message_data = {'content': 'This should not work'}
+        response = self.client.post(self.send_message_url, message_data)
+        
+        # Should also redirect to login
+        self.assertEqual(response.status_code, 302)  # Redirect
+        self.assertTrue('login' in response.url.lower())
+        
+        # Message should not be in database
+        self.assertFalse(
+            ChatMessage.objects.filter(
+                content='This should not work'
+            ).exists()
+        )

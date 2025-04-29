@@ -23,7 +23,6 @@ urlpatterns = [
     path('send-message/', views.send_message, name='send_message'),
     path('get-messages/', views.get_messages, name='get_messages'),
     path('pending_approval/', views.pending_approval, name='pending_approval'),
-    path('referee/<int:pk>/', views.RefereeDetailView.as_view(), name='referee-detail'),
     path('dashboard/', views.referee_stats_dashboard, name='dashboard'),
     path('api/match/<int:match_id>/', views.match_details_api, name='match_details_api'),
     path('ex-referee/login/', views.ex_referee_login, name='ex_referee_login'),
@@ -36,7 +35,7 @@ urlpatterns = [
     path('referee-leaderboard/', views.referee_season_leaderboard, name='referee_leaderboard'),
     path('banned/', views.banned_view, name='banned'),
     path('referee/feedback/', views.referee_feedback, name='referee_feedback'),
-
+    path('api/vote-results/<int:match_id>/', views.get_vote_results, name='get_vote_results')
 
 
 

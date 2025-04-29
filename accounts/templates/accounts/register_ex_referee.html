@@ -4,7 +4,9 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center">Register as an Ex-Referee</h2>
+    <div class="card-header">
+        <h2 class="text-center" style="color: white">Register as an Ex-Referee</h2>
+    </div>
     <div class="card mx-auto" style="max-width: 500px;">
         <div class="card-body">
             <form method="POST">
@@ -18,10 +20,10 @@
                 
                 {% for field in form %}
                 <div class="mb-3 {% if field.errors %}has-error{% endif %}">
-                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                    <label for="{{ field.id_for_label }}" class="form-label text-white">{{ field.label }}</label>
                     {{ field }}
                     {% if field.help_text %}
-                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                    <small class="form-text text-light">{{ field.help_text }}</small>
                     {% endif %}
                     {% if field.errors %}
                     <ul class="errorlist">
@@ -33,10 +35,10 @@
                 </div>
                 {% endfor %}
                 
-                <button type="submit" class="btn btn-primary w-100">Register</button>
+                <button type="submit" class="btn btn-primary w-100" style="background-color: rgb(37, 33, 247); ">Register</button>
             </form>
-            <p class="text-center mt-3">
-                Already have an account? <a href="{% url 'accounts:login' %}">Login</a>
+            <p class="text-center mt-3 text-white">
+                Already have an account? <a href="{% url 'accounts:login' %}" style="color: white">Login</a>
             </p>
         </div>
     </div>
@@ -50,6 +52,43 @@
     list-style-type: none;
     padding-left: 0;
     margin-top: 5px;
+}
+body {
+    background-color: #010628;  
+}
+.card {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  /* Add shadow to card for better contrast */
+}
+
+.card-header {
+    background-color: #0d2456;  /* Darker blue for header */
+}
+
+.card-body {
+    background-color: #150f63;  /* Darker blue for header */
+    color: white;
+}
+
+.form-control, 
+.form-select,
+input[type="text"], 
+input[type="email"], 
+input[type="password"],
+input[type="number"],
+textarea {
+    background-color: #0a4bf0; 
+    border: 1px solid #2a4494;
+    color: white;
+    border-radius: 8px !important; 
+}
+
+
+
+.form-control:focus, .form-select:focus {
+    background-color: #3a49a0; 
+    border-color: #4a5af8;
+    color: white;
+    box-shadow: 0 0 0 0.25rem rgba(74, 90, 248, 0.25);
 }
 </style>
 {% endblock %}
