@@ -65,7 +65,7 @@
 {% if request.path == '/' %}
         <h1 style="text-align: center; color: white; margin-top: 50px;">Welcome to Ref IQ</h1>
         <div class="logo-container" style="text-align: center; margin: 30px 0 50px;">
-            <img src="{% static 'images/ref-iqlogo.png' %}" alt="Ref IQ Logo" style="height: 400px; width: auto;">
+            <img src="{% static 'images/ref-iqlogo.png' %}" alt="Ref IQ Logo" style="height: 400px; width: auto; border-radius: 8px;">
         </div>
 {% endif %}
     
@@ -275,7 +275,7 @@
                                             <div id="rating-status-{{ match.fixture.id }}" style="font-size: 11px; color: #718096; text-align: center; margin-top: 5px; height: 15px;"></div>
                                         </div>
                                         <div class="feedback" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e0;">
-                                            <div style="font-size: 12px; color: #4a5568; margin-bottom: 5px;">
+                                            <div style="font-size: 12px; color: #ffffff; margin-bottom: 5px;">
                                                 {% if match.fixture.id %}
                                                     <a href="{% url 'accounts:rate_referee' match.fixture.id %}"> Provide feedback</a>
                                                 {% else %}
@@ -375,7 +375,34 @@
                     <p style="margin-top: 10px; font-size: 14px;"><strong>Total votes:</strong> <span id="total-votes-106895">24</span></p>
                 </div>
             </div>
+        </div>
 
+        <div style="margin-bottom: 60px;">
+            <h4 style="color: white">Bournemouth vs Newcastle - Disallowed Goal for Handball</h4>
+                <video width="600" controls preload="auto" controlsList="nodownload" class="referee-video" style="margin: 15px 0; border-radius: 8px;">
+                    <source src="{% static 'videos/game_clip2.mp4' %}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <div style="background-color: rgba(255, 255, 255, 0.1); padding: 15px; border-radius: 8px;">
+                    <p style="color: white"><strong>Fan Question:</strong> Was the referee's decision correct?</p>
+                    <div style="display: flex; margin-top: 10px;">
+                        <div style="flex: 1; padding-right: 10px; color: white" >
+                            <div style="height: 30px; background-color: #38a169; border-radius: 4px; position: relative;">
+                                <div style="position: absolute; right: 10px; top: 5px; color: white; font-weight: bold;" id="yes-display-1208304">67%</div>
+                            </div>
+                            <p style="text-align: center; margin-top: 5px;">✅ Yes</p>
+                        </div>
+                        <div style="flex: 1; padding-left: 10px;">
+                            <div style="height: 30px; background-color: #e53e3e; border-radius: 4px; position: relative;">
+                                <div style="position: absolute; right: 10px; top: 5px; color: white; font-weight: bold;" id="no-display-1208304">33%</div>
+                            </div>
+                            <p style="text-align: center; margin-top: 5px; color: white">❌ No</p>
+                        </div>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 14px; color: white;"><strong>Total votes:</strong> <span id="total-votes-1208304">24</span></p>
+                </div>
+            </div>
+        </div>
         <!-- Profile Icon in the top right corner -->
         <div style="position: absolute; top: 20px; right: 20px;">
             <a href="{% url 'accounts:referee_profile' %}">
@@ -420,7 +447,7 @@
                 <br>
                 <br>
                 <div id="match-1208304">
-                    <h3>Arsenal vs Chelsea</h3>
+                    <h3>Bournemouth vs Newcastle</h3>
                     <h3>Was the referee's decision correct?</h3>
                     <button onclick="submitVote('yes', 1208304)">✅ Yes</button>
                     <button onclick="submitVote('no', 1208304)">❌ No</button>
@@ -733,34 +760,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function formatMatchDetails(match) {
             return `
-                <h3 style="text-align: center; margin-bottom: 20px; color:white; ">Match Details</h3>
-                
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                    <div style="text-align: center; width: 40%;">
-                        <img src="${match.teams.home.logo}" alt="${match.teams.home.name}" style="width: 60px; height: 60px;">
-                        <h4>${match.teams.home.name}</h4>
+                <div style="background-color: #150f63; padding: 20px; border-radius: 8px; color: white; border-color: #150f63; max-height: 80vh; overflow-y: auto;">
+                    <h3 style="text-align: center; margin-bottom: 20px; color:white; ">Match Details</h3>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <div style="text-align: center; width: 40%;">
+                            <img src="${match.teams.home.logo}" alt="${match.teams.home.name}" style="width: 60px; height: 60px;">
+                            <h4>${match.teams.home.name}</h4>
+                        </div>
+                        
+                        <div style="text-align: center; font-size: 24px; font-weight: bold;">
+                            ${match.goals.home} - ${match.goals.away}
+                        </div>
+                        
+                        <div style="text-align: center; width: 40%;">
+                            <img src="${match.teams.away.logo}" alt="${match.teams.away.name}" style="width: 60px; height: 60px;">
+                            <h4>${match.teams.away.name}</h4>
+                        </div>
                     </div>
                     
-                    <div style="text-align: center; font-size: 24px; font-weight: bold;">
-                        ${match.goals.home} - ${match.goals.away}
+                    <div style="margin-bottom: 15px; text-align: center;">
+                        <p><strong>Date:</strong> ${new Date(match.fixture.date).toLocaleString()}</p>
+                        <p><strong>Venue:</strong> ${match.fixture.venue.name}</p>
+                        <p><strong>Referee:</strong> ${match.fixture.referee || 'Not available'}</p>
+                        <p><strong>Status:</strong> ${match.fixture.status.long}</p>
                     </div>
                     
-                    <div style="text-align: center; width: 40%;">
-                        <img src="${match.teams.away.logo}" alt="${match.teams.away.name}" style="width: 60px; height: 60px;">
-                        <h4>${match.teams.away.name}</h4>
-                    </div>
+                    ${match.events ? renderEvents(match.events) : ''}
+                    ${match.lineups ? renderLineups(match.lineups) : ''}
+                    ${match.statistics ? renderStats(match.statistics) : ''}
                 </div>
-                
-                <div style="margin-bottom: 15px; text-align: center;">
-                    <p><strong>Date:</strong> ${new Date(match.fixture.date).toLocaleString()}</p>
-                    <p><strong>Venue:</strong> ${match.fixture.venue.name}</p>
-                    <p><strong>Referee:</strong> ${match.fixture.referee || 'Not available'}</p>
-                    <p><strong>Status:</strong> ${match.fixture.status.long}</p>
-                </div>
-                
-                ${match.events ? renderEvents(match.events) : ''}
-                ${match.lineups ? renderLineups(match.lineups) : ''}
-                ${match.statistics ? renderStats(match.statistics) : ''}
+
             `;
         }
 
@@ -870,6 +900,10 @@ function getCookie(name) {
     return cookieValue;
 }
 function submitRefereeRating(matchId, rating) {
+    // Redirect to verification page first
+    window.location.href = `/verify-match-watching/${matchId}/`;
+    return;
+
     const url = `rate-referee/${matchId}/`;  
     const csrftoken = getCookie('csrftoken');  
     

@@ -4,15 +4,15 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2 class="text-center">Rate Referee Performance</h2>
+    <h2 class="text-center" style="color: white">Rate Referee Performance</h2>
     
     <div class="card mx-auto" style="max-width: 600px;">
-        <div class="card-header">
+        <div class="card-header" style="background-color: #150f63; color: white">
             <h5>{{ match.home_team }} {{ match.get_score_display }} {{ match.away_team }}</h5>
             <p class="mb-0">Referee: {{ match.match_referee.username }}</p>
             <p class="mb-0">Date: {{ match.match_date|date:"d M Y" }}</p>
         </div>
-        <div class="card-body">
+        <div class="card-body" style="background-color: #150f63; color: white">
             <form method="post">
                 {% csrf_token %}
                 
@@ -33,11 +33,39 @@
                 </div>
                 
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Submit Rating</button>
+                    <button type="submit" class="btn btn-primary" style="background-color: rgb(37, 33, 247);">Submit Rating</button>
                     <a href="{% url 'accounts:ex_referee_dashboard' %}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<style>
+    body {
+        background-color: #010628;
+        color: white
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        background-color: rgb(37, 33, 247);    /* Dark background */
+        color: #ffffff;               /* White text */
+        border: 1px solid #3e4b85;    /* subtle border */
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    textarea::placeholder,
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    .feedback-box {
+        background-color: rgb(37, 33, 247);
+        color: white
+    }
+    .feedback-box ::placeholder {
+        color: white
+    }
+</style>
 {% endblock %}

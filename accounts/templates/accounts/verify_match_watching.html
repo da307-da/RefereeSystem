@@ -1,0 +1,87 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <style>
+    body { 
+        background-color: #010628; 
+        color: white;
+    }
+    </style>
+
+<div class="container mt-4">
+    <h2 class="mb-3" style="color:white">Match Viewing Verification</h2>
+
+    <div class="card mb-4">
+        <div class="card-body" style="background-color: #150f63; color: white">
+            <h4 class="card-title">{{ match.home_team }} vs {{ match.away_team }}</h4>
+            <p class="card-text"><strong>Date:</strong> {{ match.match_date }}</p>
+        </div>
+    </div>
+
+    {% if no_questions %}
+        <div class="alert" style="background-color: #150f63; color: white; border-left: 4px solid #2563eb; padding: 20px;">
+            <h5 class="alert-heading" style="color: #60a5fa;">No Questions Available Yet</h5>
+            <p>{{ message }}</p>
+            <hr style="border-top-color: rgba(255,255,255,0.2);">
+            <p class="mb-0">Thank you for your patience. Our team is working on adding verification questions for this match.</p>
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'accounts:ex_referee_dashboard' %}" class="btn" style="background-color: rgb(37, 33, 247); color: white;">
+                View my Dashboard
+            </a>
+        </div>
+        <div class="text-center mt-4">
+            <a href="{% url 'accounts:home' %}" class="btn" style="background-color: rgb(37, 33, 247); color: white;">
+               Back to Homepage
+            </a>
+        </div>
+
+    {% elif verification_failed %}
+        <div class="alert" style="background-color: #7f1d1d; color: white; border-left: 4px solid #ef4444; padding: 20px;">
+            <h5 class="alert-heading" style="color: #fca5a5;">Verification Failed</h5>
+            <p>You answered {{ correct_count }} out of {{ total_questions }} questions correctly, but needed at least {{ required_correct }} correct answers to verify.</p>
+            <hr style="border-top-color: rgba(255,255,255,0.2);">
+            <p class="mb-0">You have {{ attempts_remaining }} verification attempts remaining. </p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+
+            <p>Please answer the following questions to verify you watched this match before we allow you to provide a rating:</p>
+
+            {% for question in questions %}
+                <div class="mb-3">
+                    <label for="question_{{ question.id }}" class="form-label"><strong>Question {{ forloop.counter }}:</strong> {{ question.question }}</label>
+                    <input type="text" class="form-control" style="background-color: #150f63; color: white" name="answer_{{ question.id }}" id="question_{{ question.id }}" required>
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary" style="background-color: rgb(37, 33, 247);">Submit Answers</button>
+            <a href="{% url 'accounts:ex_referee_dashboard' %}" class="btn" style="background-color: #4b5563; color: white; margin-left: 10px;">
+                Return to Dashboard
+            </a>
+        </form>
+
+    {% else %}
+        <p>Just a few questions to verify that you have a good understanding of what happened in this match</p>
+        <p>Please answer the following questions to verify you watched this match before we allow you to provide a rating:</p>
+    
+       
+        <form method="post">
+            {% csrf_token %}
+
+            {% for question in questions %}
+                <div class="mb-3">
+                    <label for="question_{{ question.id }}" class="form-label"><strong>Question {{ forloop.counter }}:</strong> {{ question.question }}</label>
+                    <input type="text" class="form-control" style="background-color: #150f63; color: white" name="answer_{{ question.id }}" id="question_{{ question.id }}" required>
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary" style="background-color: rgb(37, 33, 247);">Submit Answers</button>
+        </form>
+    {% endif %}
+</div>
+{% endblock %}

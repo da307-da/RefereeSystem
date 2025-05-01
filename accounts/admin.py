@@ -1,7 +1,6 @@
-# admin.py
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import CustomUser, PremierLeagueReferee
+from .models import CustomUser, PremierLeagueReferee, MatchQuestion
 
 class PremierLeagueRefereeInline(admin.StackedInline):
     model = PremierLeagueReferee
@@ -10,17 +9,17 @@ class PremierLeagueRefereeInline(admin.StackedInline):
     fk_name = 'user'
     
     def get_queryset(self, request):
-        # Only show for users who are referees
+        # Only shows for users who are referees
         return super().get_queryset(request).filter(user__user_type='referee')
 
 
 class CustomUserAdmin(UserAdmin):
     list_display = ('username', 'email', 'user_type', 'is_staff', 'profile_picture_approved', 'is_approved', 'is_banned')
     
-    # Allow admins to approve profile pictures directly from the list view
+    # Allows admins to approve profile pictures directly from the list view
     list_editable = ('profile_picture_approved', 'is_banned')
 
-    # Add custom fields to fieldsets
+    # Custom fields 
     fieldsets = UserAdmin.fieldsets + (
         ('Custom Fields', {
             'fields': (
@@ -126,3 +125,24 @@ class PremierLeagueRefereeAdmin(admin.ModelAdmin):
 
 # Registers the CustomUser model with the updated admin class
 admin.site.register(CustomUser, CustomUserAdmin)
+
+class MatchQuestionInline(admin.TabularInline):
+    model = MatchQuestion
+    extra = 3
+    fields = ('question', 'correct_answer', 'category', 'difficulty')
+
+class MatchAdmin(admin.ModelAdmin):
+    # Existing fields
+    inlines = [MatchQuestionInline] 
+    list_display = ('fixture_id', 'home_team', 'away_team', 'match_date', 'verification_question_count')
+    
+    def verification_question_count(self, obj):
+        return obj.verification_questions.count()
+    verification_question_count.short_description = "Questions"
+
+@admin.register(MatchQuestion)
+class MatchQuestionAdmin(admin.ModelAdmin):
+    list_display = ('match', 'question', 'category', 'difficulty', 'times_asked', 'effectiveness')
+    list_filter = ('match__match_date', 'category', 'difficulty')
+    search_fields = ('question', 'correct_answer', 'match__home_team__name', 'match__away_team__name')
+
