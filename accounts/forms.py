@@ -135,7 +135,7 @@ class RefereeRatingForm(forms.ModelForm):
                 'step': '0.1'
             }),
             'feedback': forms.Textarea(attrs={
-                'class': 'form-control',
+                'class': 'form-control feedback-box white-placeholder',
                 'rows': 4,
                 'placeholder': 'Provide your assessment of the referee\'s performance'
             })

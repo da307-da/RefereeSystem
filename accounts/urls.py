@@ -35,9 +35,9 @@ urlpatterns = [
     path('referee-leaderboard/', views.referee_season_leaderboard, name='referee_leaderboard'),
     path('banned/', views.banned_view, name='banned'),
     path('referee/feedback/', views.referee_feedback, name='referee_feedback'),
-    path('api/vote-results/<int:match_id>/', views.get_vote_results, name='get_vote_results')
-
-
+    path('api/vote-results/<int:match_id>/', views.get_vote_results, name='get_vote_results'),
+    path('admin/match/<int:match_id>/questions/', views.match_questions_form, name='match_questions_form'),
+    path('verify-match-watching/<int:match_id>/', views.verify_match_watching, name='verify_match_watching'),
 
 ]
 

@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.core.validators import FileExtensionValidator, MinValueValidator, MaxValueValidator
 from django.conf import settings
+from django.utils import timezone
 
 class CustomUser(AbstractUser):
     USER_TYPE_CHOICES= (
@@ -54,7 +55,7 @@ class PremierLeagueReferee(models.Model):
     )
     games_officiated = models.PositiveIntegerField(default=0)
     poor_decisions = models.PositiveIntegerField(default=0)
-    current_season = models.CharField(max_length=9, default="2024/25")  # Track stats by season
+    current_season = models.CharField(max_length=9, default="2024/25")  # Tracks stats by season
 
     class Meta:
         ordering = ['poor_decisions', '-performance_rating']
@@ -142,7 +143,7 @@ class Match(models.Model):
     penalties_given = models.PositiveIntegerField(default=0)
 
 
-    # Add referee fields
+    # Referee fields
     match_referee = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
@@ -152,12 +153,12 @@ class Match(models.Model):
         limit_choices_to={'user_type': 'referee'}  # Only allow referee type users
     )
 
-    # Add fields for decision analysis
+    # Fields for decision analysis
     referee_decision_correct = models.BooleanField(null=True, blank=True)
     decision_votes_correct = models.IntegerField(default=0)
     decision_votes_incorrect = models.IntegerField(default=0)
-    
-    # You might want to store the specific decisions made
+
+
     decision_description = models.TextField(blank=True, null=True)
     decision_timestamp = models.DateTimeField(null=True, blank=True)
 
@@ -168,13 +169,13 @@ class Match(models.Model):
         return f"{self.home_team} vs {self.away_team} - {self.match_date.date()}"
     
     def get_score_display(self):
-        """Return formatted score"""
+        """Returns formatted score"""
         if self.home_score is not None and self.away_score is not None:
             return f"{self.home_score} - {self.away_score}"
         return "TBD"
         
     def average_performance_rating(self):
-        """Calculate the average performance rating for the referee in this match"""
+        """Calculates the average performance rating for the referee in this match"""
         ratings = self.referee_ratings.all()
         if not ratings:
             return None
@@ -188,7 +189,7 @@ class RefereeDecisionVote(models.Model):
     comment = models.TextField(blank=True, null=True)
 
     class Meta:
-        # Ensure one vote per user per match
+        # Ensures one vote per user per match
         unique_together = ['match', 'voter']
 
     def __str__(self):
@@ -223,4 +224,91 @@ class RefereePerformanceRating(models.Model):
         return f"Rating for {self.match.match_referee} by {self.ex_referee.username} ({self.rating_score}/10)"
     
 
+class MatchQuestion(models.Model):
+    match = models.ForeignKey('Match', on_delete=models.CASCADE, related_name='verification_questions')
+    question = models.CharField(max_length=255)
+    correct_answer = models.CharField(max_length=255)
+    
+    
+    CATEGORY_CHOICES = (
+        ('referee_action', 'Referee Action'),
+        ('var_incident', 'VAR Incident'),
+        ('broadcast', 'Broadcast Detail'),
+        ('visual_element', 'Visual Element'),
+        ('sequence', 'Event Sequence'),
+        ('environment', 'Match Environment'),
+    )
+    category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='referee_action')
+    difficulty = models.IntegerField(default=1, choices=[(1, 'Easy'), (2, 'Medium'), (3, 'Hard')])
+    
+    # Track effectiveness of questions
+    times_asked = models.IntegerField(default=0)
+    times_answered_correctly = models.IntegerField(default=0)
+    
+    class Meta:
+        unique_together = ['match', 'question']  # Prevent duplicate questions
+    
+    def __str__(self):
+        return f"Q for {self.match}: {self.question[:30]}..."
+    
+    @property
+    def effectiveness(self):
+        """Calculate question effectiveness (% of correct answers)"""
+        if self.times_asked == 0:
+            return 0
+        return (self.times_answered_correctly / self.times_asked) * 100
 
+class MatchViewingVerification(models.Model):
+    """
+    Model to track whether a user has verified watching a particular match
+    through a quiz or other verification method before rating a referee.
+    """
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='match_verifications')
+    match = models.ForeignKey('Match', on_delete=models.CASCADE, related_name='viewing_verifications')
+    verified = models.BooleanField(default=False)
+    verification_timestamp = models.DateTimeField(null=True, blank=True)
+    
+    # Track verification method
+    VERIFICATION_METHODS = (
+        ('quiz', 'Knowledge Quiz'),
+        ('declaration', 'Viewing Declaration'),
+        ('clips', 'Key Clips Viewing'),
+        ('admin', 'Admin Override'),
+    )
+    verification_method = models.CharField(max_length=20, choices=VERIFICATION_METHODS, default='quiz')
+    
+    # Track verification details
+    verification_score = models.IntegerField(null=True, blank=True)  # For quiz: number of correct answers
+    verification_attempts = models.IntegerField(default=1)  # Number of attempts
+    
+    # Optional IP address for verification tracking
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    
+    # Metadata
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['user', 'match']
+        verbose_name = "Match Viewing Verification"
+        verbose_name_plural = "Match Viewing Verifications"
+        ordering = ['-verification_timestamp']
+    
+    def __str__(self):
+        verification_status = "Verified" if self.verified else "Not Verified"
+        return f"{self.user.username} - {self.match} - {verification_status}"
+    
+    def save(self, *args, **kwargs):
+        # If being marked as verified, set timestamp
+        if self.verified and not self.verification_timestamp:
+            self.verification_timestamp = timezone.now()
+        super().save(*args, **kwargs)
+    
+    @property
+    def is_expired(self):
+        """Return True if the verification has expired (e.g., after 48 hours)"""
+        if not self.verified or not self.verification_timestamp:
+            return True
+            
+        expiry_period = timezone.timedelta(hours=48)
+        return timezone.now() > (self.verification_timestamp + expiry_period)

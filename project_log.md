@@ -71,7 +71,7 @@ Friday: Interim Report submission
 Tasks for next week
 . Drawing a rough template of database and creating appropriate models needed to distinguish between all the user types
 
-Week beginning 25/11/24
+Week beginning 25/11/24:
 
 Monday: Drew rough template of database structure in a UML Diagram
 Tuesday: Created User model of CustomUser class
@@ -85,7 +85,7 @@ Tasks for next week:
 . Login and Registration Forms
 
 
-Week beginning 02/12/24
+Week beginning 02/12/24:
 
 Monday: Created Registration form for referees using attributes from the Referee model in my database
 Tuesday: Created Registration form for users using attributes from the User model in my database
