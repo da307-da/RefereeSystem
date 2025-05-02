@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f"API connection failed: {test_response.status_code}"))
                 return
             
-            # Process matches for different seasons
+            # Processes matches for the current season
             for season in [2024]:
                 self.stdout.write(self.style.SUCCESS(f'\nImporting Premier League matches for season {season}...'))
                 
@@ -57,29 +57,29 @@ class Command(BaseCommand):
                     fixtures = data.get('response', [])
                     self.stdout.write(f"Found {len(fixtures)} fixtures for season {season}")
                     
-                    # Process each fixture
+                    # Processes each fixture
                     for fixture in fixtures:
                         fixture_data = fixture.get('fixture', {})
                         teams_data = fixture.get('teams', {})
                         goals_data = fixture.get('goals', {})
                         
-                        # Extract the API fixture ID
+                        # Extracts the API fixture ID
                         api_fixture_id = fixture_data.get('id')
                         
                         if api_fixture_id is None:
                             self.stdout.write(self.style.WARNING(f"Skipping fixture without ID"))
                             continue
                         
-                        # Check if match already exists in our database
+                        # Checks if match already exists in our database
                         existing_match = Match.objects.filter(fixture_id=api_fixture_id).first()
                         
                         if existing_match:
                             self.stdout.write(f"Updating existing match: {api_fixture_id}")
-                            # Update existing match with latest data
+                            # Updates existing match with latest data
                             self._update_match(existing_match, fixture_data, teams_data, goals_data)
                         else:
                             self.stdout.write(f"Creating new match: {api_fixture_id}")
-                            # Create new match
+                            # Creates new match
                             self._create_match(api_fixture_id, fixture_data, teams_data, goals_data)
                 
                 else:
@@ -98,15 +98,15 @@ class Command(BaseCommand):
         if not team_name:
             raise ValueError("Team name is required")
         
-        # Try to find the team by external ID first
+        # Tries to find the team by external ID first
         team = Team.objects.filter(external_id=team_id).first()
         
         if not team:
-            # Then try by name
+            # Then tries by name
             team = Team.objects.filter(name=team_name).first()
         
         if not team:
-            # Create new team if it doesn't exist
+            # Creates new team if it doesn't exist
             team = Team.objects.create(
                 name=team_name,
                 external_id=team_id,
@@ -119,15 +119,15 @@ class Command(BaseCommand):
     def _create_match(self, api_fixture_id, fixture_data, teams_data, goals_data):
         """Helper method to create a new match"""
         try:
-            # Get or create teams
+            # Gets or creates teams
             home_team = self._get_or_create_team(teams_data.get('home', {}))
             away_team = self._get_or_create_team(teams_data.get('away', {}))
             
-            # Parse match date
+            # Parses match date
             match_date_str = fixture_data.get('date')
             match_date = datetime.fromisoformat(match_date_str.replace('Z', '+00:00')) if match_date_str else None
             
-            # Determine match status
+            # Determines match status
             api_status = fixture_data.get('status', {}).get('short')
             if api_status == 'FT':
                 status = 'FINISHED'
@@ -136,7 +136,7 @@ class Command(BaseCommand):
             else:
                 status = 'SCHEDULED'
             
-            # Create the match
+            # Creates the match
             Match.objects.create(
                 fixture_id=api_fixture_id,
                 home_team=home_team,
@@ -157,14 +157,14 @@ class Command(BaseCommand):
     def _update_match(self, match, fixture_data, teams_data, goals_data):
         """Helper method to update an existing match"""
         try:
-            # Update match details
+            # Updates match details
             match_date_str = fixture_data.get('date')
             if match_date_str:
                 match.match_date = datetime.fromisoformat(match_date_str.replace('Z', '+00:00'))
             
             match.venue = fixture_data.get('venue', {}).get('name', match.venue)
             
-            # Update scores if available
+            # Updates scores if available
             home_score = goals_data.get('home')
             away_score = goals_data.get('away')
             if home_score is not None:
@@ -172,14 +172,14 @@ class Command(BaseCommand):
             if away_score is not None:
                 match.away_score = away_score
             
-            # Update status
+            # Updates status
             api_status = fixture_data.get('status', {}).get('short')
             if api_status == 'FT':
                 match.status = 'FINISHED'
             elif api_status in ['1H', '2H', 'HT']:
                 match.status = 'LIVE'
             
-            # Save the updated match
+            # Saves the updated match
             match.save()
             
             self.stdout.write(f"Updated match: {match}")

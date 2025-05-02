@@ -289,7 +289,7 @@ def user_login(request):
 
 @login_required
 def fan_chat(request):
-    messages = ChatMessage.objects.select_related('user').order_by('-timestamp')[:50]
+    messages = ChatMessage.objects.select_related('user').order_by('timestamp')[:50]
 
     return render(request, 'accounts/fan_chat.html', {'messages': messages})
 

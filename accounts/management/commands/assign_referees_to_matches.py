@@ -12,12 +12,17 @@ from zoneinfo import ZoneInfo
 class Command(BaseCommand):
     help = 'Assign referees to matches that don\'t have referees assigned'
 
+
     def add_arguments(self, parser):
+
+        #sets a limit for too many matches being assigned a referee at once 
         parser.add_argument('--limit', type=int, help='Limit number of matches to process')
+
+        
         parser.add_argument('--delay', type=float, default=1.0, help='Delay between API calls (seconds)')
 
     def handle(self, *args, **options):
-        # Define current season date range (approximate)
+        # Defines current season date range (approximate)
         season_start = timezone.make_aware(
             datetime(2024, 8, 1), 
             timezone=ZoneInfo('UTC'),       
@@ -47,7 +52,7 @@ class Command(BaseCommand):
         count_failed = 0
         count_no_referee = 0
         
-        # Process each match
+        # Processes each match
         for i, match in enumerate(matches):
             try:
                 self.stdout.write(f"Processing match {i+1}/{len(matches)}: {match}")
@@ -57,7 +62,7 @@ class Command(BaseCommand):
                     count_failed += 1
                     continue
                 
-                # Make API call to get match details
+                # Makes API call to get match details
                 api_url = f"https://v3.football.api-sports.io/fixtures?id={match.fixture_id}"
                 headers = {'x-apisports-key': settings.API_KEY}
                 
@@ -84,10 +89,10 @@ class Command(BaseCommand):
                     count_no_referee += 1
                     continue
                 
-                # Get or create referee
+                # Gets or creates referees
                 referee_user = sync_referee_to_database(referee_name)
                 
-                # Assign referee to match
+                # Assigns referees to matches
                 match.match_referee = referee_user
                 match.save()
                 

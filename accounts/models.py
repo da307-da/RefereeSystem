@@ -32,7 +32,7 @@ class CustomUser(AbstractUser):
     ban_reason = models.TextField(blank=True, null=True, verbose_name="Ban Reason")
     ban_until = models.DateTimeField(blank=True, null=True, verbose_name="Banned Until")
 
-    # Field to track registration progress
+    # Field used to track registration progress
     registration_complete = models.BooleanField(default=False, verbose_name="Registration Complete")
 
     def __str__(self):
@@ -150,7 +150,7 @@ class Match(models.Model):
         null=True,
         blank=True,
         related_name='matches_officiated',
-        limit_choices_to={'user_type': 'referee'}  # Only allow referee type users
+        limit_choices_to={'user_type': 'referee'}  # Only allows referee type users
     )
 
     # Fields for decision analysis
@@ -241,7 +241,7 @@ class MatchQuestion(models.Model):
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES, default='referee_action')
     difficulty = models.IntegerField(default=1, choices=[(1, 'Easy'), (2, 'Medium'), (3, 'Hard')])
     
-    # Track effectiveness of questions
+    # Tracks effectiveness of questions
     times_asked = models.IntegerField(default=0)
     times_answered_correctly = models.IntegerField(default=0)
     
@@ -268,7 +268,7 @@ class MatchViewingVerification(models.Model):
     verified = models.BooleanField(default=False)
     verification_timestamp = models.DateTimeField(null=True, blank=True)
     
-    # Track verification method
+    # Tracks verification method
     VERIFICATION_METHODS = (
         ('quiz', 'Knowledge Quiz'),
         ('declaration', 'Viewing Declaration'),
@@ -277,12 +277,11 @@ class MatchViewingVerification(models.Model):
     )
     verification_method = models.CharField(max_length=20, choices=VERIFICATION_METHODS, default='quiz')
     
-    # Track verification details
+    # Tracks verification details
     verification_score = models.IntegerField(null=True, blank=True)  # For quiz: number of correct answers
     verification_attempts = models.IntegerField(default=1)  # Number of attempts
     
-    # Optional IP address for verification tracking
-    ip_address = models.GenericIPAddressField(null=True, blank=True)
+
     
     # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
