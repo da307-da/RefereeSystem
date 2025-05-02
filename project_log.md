@@ -1,7 +1,7 @@
 A Project Log
 Weekly Log
 
-Week beginning 21/10/24
+Week beginning 21/10/24:
 
 Monday: Worked on the Aims and Objectives section of my interim report
 Tuesday: Drew out a low-fidelity ER Diagram of my system (basic functions)
@@ -17,7 +17,7 @@ Tasks for next week:
 . Finish rest of my report
 
 
-Week beginning 28/10/24
+Week beginning 28/10/24:
 
 Monday: Drew out a medium-fidelity diagram of system in a UML Diagram
 Tuesday: Finished Aims and Objectives section of interim report
@@ -31,7 +31,7 @@ Tasks for next week:
 . Outline of Specification and Design - Look into the software architecture of Django in relation to my project(in other words, how my application will be structured)
 
 
-Week beginning 04//11/24
+Week beginning 04//11/24:
 
 Monday: Functional requirements added to interim report (Users)
 Tuesday: Functional requirements added to Interim report (Referees)
@@ -46,7 +46,7 @@ Tasks for next week:
 . High fidelity ER Diagram drawn and explained in report
 
 
-Week beginning 11/11/24
+Week beginning 11/11/24:
 
 Monday: Software Architecture drawn and Data Layer explained
 Tuesday: Authentication and Role-Based User System and Core Business Logic Layer explained
@@ -60,7 +60,7 @@ Tasks for next week:
 . Consult with supervisor on whether any changes should be made to plan (perhaps if time frames are unrealistic etc.)
 . Review Interim report and double-check for readability, spelling or grammatical errors
 
-Week beginning 18/11/24
+Week beginning 18/11/24:
 
 Monday: Rough plan of the rest of report (timescales etc.)
 Tuesday: Timetable of plan (week by week) including what has already been done
@@ -218,7 +218,7 @@ Tasks for next week:
 . Complete JavaScript code
 . Begin unit testing on code
 
-Week beginning 17/02/25
+Week beginning 17/02/25:
 
 Monday: Finished with JavaScript code
 Tuesday: Tested referee's most recent match function to see if it showed the right information for each referee

@@ -379,7 +379,7 @@
 
         <div style="margin-bottom: 60px;">
             <h4 style="color: white">Bournemouth vs Newcastle - Disallowed Goal for Handball</h4>
-                <video width="600" controls preload="auto" controlsList="nodownload" class="referee-video" style="margin: 15px 0; border-radius: 8px;">
+                <video width="600" preload="metadata" controlsList="nodownload" class="referee-video" style="margin: 15px 0; border-radius: 8px;">
                     <source src="{% static 'videos/game_clip2.mp4' %}" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
@@ -507,6 +507,29 @@
                         <p><strong>Results:</strong></p>
                         <p>✅ Yes: <span id="yes-percentage-1208191">0%</span></p>
                         <p>❌ No: <span id="no-percentage-1208191">0%</span></p>
+                    </div>
+                </div>
+                <br>
+                <br>
+                <br>
+                <div id="match-1208112">
+                    <h3>West Ham vs United</h3>
+                    <h3>Was a penalty rightly given to West Ham?</h3>
+                    <button onclick="submitVote('yes', 1208112)">✅ Yes</button>
+                    <button onclick="submitVote('no', 1208112)">❌ No</button>
+
+
+            
+                    <video width="600" controls preload="auto" playsinline class="referee-video">
+                        <source src="{% static 'videos/game_clip5.mp4' %}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+            
+                    <!-- Voting results -->
+                    <div id="vote-results-1208112" style="margin-top: 10px;">
+                        <p><strong>Results:</strong></p>
+                        <p>✅ Yes: <span id="yes-percentage-1208112">0%</span></p>
+                        <p>❌ No: <span id="no-percentage-1208112">0%</span></p>
                     </div>
                 </div>
             </div>
