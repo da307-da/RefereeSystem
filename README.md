@@ -1,6 +1,17 @@
 # referee_system
 
-## Information about this repository
+## This was my final year project at university, it is an interactive system in which referees within the Premier League are ranked from best to worst based on their decision making at pivotal moments in the match. Their rankings are displayed in the form of a table, that shows several metrics. The system uses a custom metric, the Poor Decisions Per Game index, which weighs referee decisions against how Virtual Assistant Referee (VAR) would have assessed the same decision.
+
+## This system consists of four user types: 
+. Casual fans (who are able to vote on decisions within the game, but don't have an influence on the referee rankings)
+
+. Ex-Referees (able to vote on referee performances and leave comments. Each vote of theirs contributes to referee Average Performance Ratings)
+
+. Referees (able to view their performance ratings)
+
+. Admins (control user onboarding, bans, etc.)
+
+Information about this repository
 
 . To run this project, enter python manage.py runserver in the terminal 
 
