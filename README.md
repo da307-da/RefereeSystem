@@ -7,7 +7,7 @@
 
 . Ex-Referees (able to vote on referee performances and leave comments. Each vote of theirs contributes to referee Average Performance Ratings)
 
-. Referees (able to view their performance ratings)
+. Referees (able to view their performance ratings game by game)
 
 . Admins (control user onboarding, bans, etc.)
 
