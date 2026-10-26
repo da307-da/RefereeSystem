@@ -11,7 +11,7 @@
 
 . Admins (control user onboarding, bans, etc.)
 
-Information about this repository
+## Information about this repository
 
 . To run this project, enter python manage.py runserver in the terminal 
 
